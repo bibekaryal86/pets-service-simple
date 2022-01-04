@@ -1,0 +1,94 @@
+package pets.service.app.util;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.http.HttpMethod;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Map;
+
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ConnectorUtil {
+
+    private static HttpClient getHttpClient() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(5L))
+                .build();
+    }
+
+    private static URI getUri(String endpoint) {
+        return URI.create(endpoint);
+    }
+
+    private static HttpRequest.BodyPublisher getPOST(Object object) {
+        return HttpRequest.BodyPublishers.ofString(Util.getGson().toJson(object));
+    }
+
+    private static HttpRequest getHttpRequestBuilder(String endpoint,
+                                                     HttpMethod httpMethod,
+                                                     Object bodyObject,
+                                                     Map<String, String> headers) {
+        HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
+                .uri(getUri(endpoint))
+                .header("Content-Type", "application/json");
+
+        if (headers != null && !headers.isEmpty()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                httpRequestBuilder = httpRequestBuilder.header(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (httpMethod == HttpMethod.POST) {
+            httpRequestBuilder = httpRequestBuilder.POST(getPOST(bodyObject));
+        } else if (httpMethod == HttpMethod.PUT) {
+            httpRequestBuilder = httpRequestBuilder.PUT(getPOST(bodyObject));
+        } else if (httpMethod == HttpMethod.DELETE) {
+            httpRequestBuilder = httpRequestBuilder.DELETE();
+        } else if (httpMethod == HttpMethod.GET) {
+            httpRequestBuilder = httpRequestBuilder.GET();
+        }
+
+        return httpRequestBuilder.build();
+    }
+
+    private static HttpResponse<String> sendHttpRequest(HttpRequest httpRequest) throws IOException, InterruptedException {
+        return getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public static HttpResponse<String> sendHttpRequest(String endpoint,
+                                                           HttpMethod httpMethod,
+                                                           Object bodyObject,
+                                                           Map<String, String> headers) {
+        try {
+            log.info("Http Request Sent::: Endpoint: [ {} ], Method: [ {} ], Headers: [ {} ], Body: [ {} ]",
+                    endpoint,
+                    httpMethod,
+                    headers == null ? 0 : headers.size(),
+                    bodyObject == null ? null : bodyObject.getClass().getName());
+
+            HttpRequest httpRequest = getHttpRequestBuilder(endpoint, httpMethod, bodyObject, headers);
+            HttpResponse<String> httpResponse = sendHttpRequest(httpRequest);
+
+            log.info("Http Response Received::: Endpoint: [ {} ], Status: [ {} ], Body: [ {} ]",
+                    endpoint,
+                    httpResponse.statusCode(),
+                    httpResponse.body() == null ? null : httpResponse.body().length());
+
+            return httpResponse;
+        } catch (InterruptedException ex) {
+            log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
+            Thread.currentThread().interrupt();
+        } catch (Exception ex) {
+            log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
+        }
+
+        return null;
+    }
+}
