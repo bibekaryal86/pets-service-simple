@@ -12,9 +12,7 @@ import java.util.List;
 @Slf4j
 public class ServletFilter implements Filter {
 
-    private static final List<String> DO_NOT_FILTER = List.of(
-            Util.CONTEXT_PATH + "/tests/ping",
-            Util.CONTEXT_PATH + "/tests/reset");
+    private static final List<String> DO_NOT_FILTER = List.of(Util.CONTEXT_PATH + "/tests/ping");
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;

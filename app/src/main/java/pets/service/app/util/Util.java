@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,6 +24,8 @@ public class Util {
     public static final String PROFILE = "SPRING_PROFILES_ACTIVE";
     public static final String BASIC_AUTH_USR = "BASIC_AUTH_USR";
     public static final String BASIC_AUTH_PWD = "BASIC_AUTH_PWD";
+    public static final String BASIC_AUTH_USR_PETSDATABASE = "BASIC_AUTH_USR_PETSDATABASE";
+    public static final String BASIC_AUTH_PWD_PETSDATABASE = "BASIC_AUTH_PWD_PETSDATABASE";
 
     // server context-path
     public static final String CONTEXT_PATH = "/pets-service";     // NOSONAR
@@ -62,5 +66,30 @@ public class Util {
         String authorization = Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
         String headerAuth = request.getHeader("Authorization");
         return hasText(headerAuth) && headerAuth.equals(String.format("Basic %s", authorization));
+    }
+
+    public static Map<String, String> getPetsDatabaseAuthHeaders() {
+        String username = getSystemEnvProperty(BASIC_AUTH_USR_PETSDATABASE);
+        String password = getSystemEnvProperty(BASIC_AUTH_PWD_PETSDATABASE);
+        String authorization = Base64.getEncoder().encodeToString(String.format("%s:%s", username, password).getBytes());
+        Map<String, String> headersMap = new HashMap<>();   // do not use Map.of, may have to add to headers
+        headersMap.put("Authorization", String.format("Basic %s", authorization));
+        return headersMap;
+    }
+
+    public static String getRequestPathParameter(HttpServletRequest request) {
+        String[] requestUriArray = request.getRequestURI().split("/");
+        if (requestUriArray.length == 5 && hasText(requestUriArray[3])) {
+            return requestUriArray[3];
+        }
+        return null;
+    }
+
+    public static Object getRequestBody(HttpServletRequest request, Class<?> clazz) {
+        try {
+            return getGson().fromJson(request.getReader(), clazz);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

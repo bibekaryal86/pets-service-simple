@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.http.HttpMethod;
+import pets.service.app.exception.CustomRuntimeException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -62,12 +63,13 @@ public class ConnectorUtil {
         return getHttpClient().send(httpRequest, HttpResponse.BodyHandlers.ofString());
     }
 
-    public static HttpResponse<String> sendHttpRequest(String endpoint,
-                                                           HttpMethod httpMethod,
-                                                           Object bodyObject,
-                                                           Map<String, String> headers) {
+    public static Object sendHttpRequest(String endpoint,
+                                         HttpMethod httpMethod,
+                                         Object bodyObject,
+                                         Map<String, String> headers,
+                                         Class<?> clazz) {
         try {
-            log.info("Http Request Sent::: Endpoint: [ {} ], Method: [ {} ], Headers: [ {} ], Body: [ {} ]",
+            log.info("HTTP Request Sent::: Endpoint: [ {} ], Method: [ {} ], Headers: [ {} ], Body: [ {} ]",
                     endpoint,
                     httpMethod,
                     headers == null ? 0 : headers.size(),
@@ -76,12 +78,12 @@ public class ConnectorUtil {
             HttpRequest httpRequest = getHttpRequestBuilder(endpoint, httpMethod, bodyObject, headers);
             HttpResponse<String> httpResponse = sendHttpRequest(httpRequest);
 
-            log.info("Http Response Received::: Endpoint: [ {} ], Status: [ {} ], Body: [ {} ]",
+            log.info("HTTP Response Received::: Endpoint: [ {} ], Status: [ {} ], Body: [ {} ]",
                     endpoint,
                     httpResponse.statusCode(),
                     httpResponse.body() == null ? null : httpResponse.body().length());
 
-            return httpResponse;
+            return Util.getGson().fromJson(httpResponse.body(), clazz);
         } catch (InterruptedException ex) {
             log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
             Thread.currentThread().interrupt();
@@ -89,6 +91,6 @@ public class ConnectorUtil {
             log.error("Error in HttpClient Send: {} | {}", endpoint, httpMethod, ex);
         }
 
-        return null;
+        throw new CustomRuntimeException("HTTP ERROR");
     }
 }
