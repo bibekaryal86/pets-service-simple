@@ -1,4 +1,4 @@
-package nospring.service.skeleton.app.util;
+package pets.service.app.util;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -23,7 +23,7 @@ public class Util {
     public static final String BASIC_AUTH_PWD = "BASIC_AUTH_PWD";
 
     // server context-path
-    public static final String CONTEXT_PATH = "/nospring-service-skeleton";     // NOSONAR
+    public static final String CONTEXT_PATH = "/pets-service";     // NOSONAR
 
     // others
     public static final int SERVER_MAX_THREADS = 100;
@@ -48,6 +48,7 @@ public class Util {
                     public boolean shouldSkipField(FieldAttributes f) {
                         return (f == null);
                     }
+
                     public boolean shouldSkipClass(Class<?> clazz) {
                         return false;
                     }
