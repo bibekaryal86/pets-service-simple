@@ -5,8 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.RefTypesConnector;
 import pets.service.app.model.*;
+import pets.service.app.util.CategoryHelper;
+import pets.service.app.util.CategoryTypeHelper;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -55,17 +59,35 @@ public class RefTypesService {
 
     public static RefCategoryResponse getAllCategories(String username, RefCategoryFilters refCategoryFilters) {
         RefCategoryResponse categoryResponse;
+
         try {
-            return RefTypesConnector.getAllCategories();
+            categoryResponse = RefTypesConnector.getAllCategories();
         } catch (Exception ex) {
             log.error("Exception in Get All Categories", ex);
-            return RefCategoryResponse.builder()
+            categoryResponse = RefCategoryResponse.builder()
                     .refCategories(Collections.emptyList())
                     .status(Status.builder()
                             .errMsg("Categories Unavailable! Please Try Again!!!")
                             .build())
                     .build();
         }
+
+        if (refCategoryFilters != null) {
+            List<Transaction> transactions = new ArrayList<>();
+            if (refCategoryFilters.isUsedInTxnsOnly()) {
+                transactions = TransactionService.getTransactionsByUser(username, null, false)
+                        .getTransactions();
+            }
+
+            categoryResponse = CategoryHelper.applyFilters(categoryResponse, refCategoryFilters, transactions);
+        }
+
+        if (!categoryResponse.getRefCategories().isEmpty()) {
+            applyAllDetails(categoryResponse);
+            categoryResponse = CategoryHelper.sortWithinRefCategoryType(categoryResponse);
+        }
+
+        return categoryResponse;
     }
 
     public static CompletableFuture<RefCategoryResponse> getAllCategoriesFuture() {
@@ -74,17 +96,25 @@ public class RefTypesService {
 
     public static RefCategoryTypeResponse getAllCategoryTypes(String username, boolean usedInTxnsOnly) {
         RefCategoryTypeResponse refCategoryTypeResponse;
+
         try {
-            return RefTypesConnector.getAllCategoryTypes();
+            refCategoryTypeResponse = RefTypesConnector.getAllCategoryTypes();
         } catch (Exception ex) {
             log.error("Exception in Get All Category Types", ex);
-            return RefCategoryTypeResponse.builder()
+            refCategoryTypeResponse = RefCategoryTypeResponse.builder()
                     .refCategoryTypes(Collections.emptyList())
                     .status(Status.builder()
                             .errMsg("Category Types Unavailable! Please Try Again!!!")
                             .build())
                     .build();
         }
+
+        if (usedInTxnsOnly) {
+            TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, null, true);
+            refCategoryTypeResponse = CategoryTypeHelper.applyUsedInTransactionsOnlyFilter(refCategoryTypeResponse.getRefCategoryTypes(), transactionResponse.getTransactions());
+        }
+
+        return refCategoryTypeResponse;
     }
 
     public static RefTransactionTypeResponse getAllTransactionTypes() {
@@ -103,5 +133,10 @@ public class RefTypesService {
 
     public static CompletableFuture<RefTransactionTypeResponse> getAllTransactionTypesFuture() {
         return CompletableFuture.supplyAsync(RefTypesService::getAllTransactionTypes);
+    }
+
+    private static void applyAllDetails(RefCategoryResponse categoryResponse) {
+        RefCategoryTypeResponse categoryTypeResponse = getAllCategoryTypes(null, false);
+        CategoryHelper.applyAllDetailsStatic(categoryResponse, categoryTypeResponse.getRefCategoryTypes());
     }
 }
