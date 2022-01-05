@@ -59,19 +59,19 @@ public class EndpointUtil {
         endpointMap.put("saveNewUserUrl", endpointBasePetsDatabase.concat(PETS_DB_USER_BASE));
         endpointMap.put("updateUserPutUrl", endpointBasePetsDatabase.concat(PETS_DB_USER_BASE).concat(PETS_DB_URL_WITH_ID));
 
-        // accounts
-        endpointMap.put("getAccountByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
-        endpointMap.put("getAccountsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_USER));
-        endpointMap.put("saveNewAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE));
-        endpointMap.put("updateAccountPutUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
-        endpointMap.put("deleteAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
-
         // ref types
         endpointMap.put("getAllAccountTypesUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_TYPE_BASE));
         endpointMap.put("getAllBanksUrl", endpointBasePetsDatabase.concat(PETS_DB_BANK_BASE));
         endpointMap.put("getAllCategoriesUrl", endpointBasePetsDatabase.concat(PETS_DB_CATEGORY_BASE));
         endpointMap.put("getAllCategoryTypesUrl", endpointBasePetsDatabase.concat(PETS_DB_CATEGORY_TYPE_BASE));
         endpointMap.put("getAllTransactionTypesUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_TYPE_BASE));
+
+        // accounts
+        endpointMap.put("getAccountByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
+        endpointMap.put("getAccountsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_USER));
+        endpointMap.put("saveNewAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE));
+        endpointMap.put("updateAccountPutUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
+        endpointMap.put("deleteAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
 
         // merchants
         endpointMap.put("getMerchantByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_ID));
