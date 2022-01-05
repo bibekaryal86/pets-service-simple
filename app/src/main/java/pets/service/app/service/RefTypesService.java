@@ -1,7 +1,5 @@
 package pets.service.app.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.RefTypesConnector;
 import pets.service.app.model.*;
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefTypesService {
 
     public static void resetRefTypesCaches() {
@@ -22,16 +19,16 @@ public class RefTypesService {
     }
 
     public static void setRefTypesCaches() {
-        CompletableFuture.supplyAsync(RefTypesConnector::getAllAccountTypes);
-        CompletableFuture.supplyAsync(RefTypesConnector::getAllBanks);
-        CompletableFuture.supplyAsync(RefTypesConnector::getAllCategories);
-        CompletableFuture.supplyAsync(RefTypesConnector::getAllCategoryTypes);
-        CompletableFuture.supplyAsync(RefTypesConnector::getAllTransactionTypes);
+        CompletableFuture.supplyAsync(new RefTypesConnector()::getAllAccountTypes);
+        CompletableFuture.supplyAsync(new RefTypesConnector()::getAllBanks);
+        CompletableFuture.supplyAsync(new RefTypesConnector()::getAllCategories);
+        CompletableFuture.supplyAsync(new RefTypesConnector()::getAllCategoryTypes);
+        CompletableFuture.supplyAsync(new RefTypesConnector()::getAllTransactionTypes);
     }
 
-    public static RefAccountTypeResponse getAllAccountTypes() {
+    public RefAccountTypeResponse getAllAccountTypes() {
         try {
-            return RefTypesConnector.getAllAccountTypes();
+            return new RefTypesConnector().getAllAccountTypes();
         } catch (Exception ex) {
             log.error("Exception in Get All Account Types", ex);
             return RefAccountTypeResponse.builder()
@@ -43,9 +40,9 @@ public class RefTypesService {
         }
     }
 
-    public static RefBankResponse getAllBanks() {
+    public RefBankResponse getAllBanks() {
         try {
-            return RefTypesConnector.getAllBanks();
+            return new RefTypesConnector().getAllBanks();
         } catch (Exception ex) {
             log.error("Exception in Get All Banks", ex);
             return RefBankResponse.builder()
@@ -57,11 +54,11 @@ public class RefTypesService {
         }
     }
 
-    public static RefCategoryResponse getAllCategories(String username, RefCategoryFilters refCategoryFilters) {
+    public RefCategoryResponse getAllCategories(String username, RefCategoryFilters refCategoryFilters) {
         RefCategoryResponse categoryResponse;
 
         try {
-            categoryResponse = RefTypesConnector.getAllCategories();
+            categoryResponse = new RefTypesConnector().getAllCategories();
         } catch (Exception ex) {
             log.error("Exception in Get All Categories", ex);
             categoryResponse = RefCategoryResponse.builder()
@@ -75,7 +72,7 @@ public class RefTypesService {
         if (refCategoryFilters != null) {
             List<Transaction> transactions = new ArrayList<>();
             if (refCategoryFilters.isUsedInTxnsOnly()) {
-                transactions = TransactionService.getTransactionsByUser(username, null, false)
+                transactions = new TransactionService().getTransactionsByUser(username, null, false)
                         .getTransactions();
             }
 
@@ -90,15 +87,15 @@ public class RefTypesService {
         return categoryResponse;
     }
 
-    public static CompletableFuture<RefCategoryResponse> getAllCategoriesFuture() {
+    public CompletableFuture<RefCategoryResponse> getAllCategoriesFuture() {
         return CompletableFuture.supplyAsync(() -> getAllCategories(null, null));
     }
 
-    public static RefCategoryTypeResponse getAllCategoryTypes(String username, boolean usedInTxnsOnly) {
+    public RefCategoryTypeResponse getAllCategoryTypes(String username, boolean usedInTxnsOnly) {
         RefCategoryTypeResponse refCategoryTypeResponse;
 
         try {
-            refCategoryTypeResponse = RefTypesConnector.getAllCategoryTypes();
+            refCategoryTypeResponse = new RefTypesConnector().getAllCategoryTypes();
         } catch (Exception ex) {
             log.error("Exception in Get All Category Types", ex);
             refCategoryTypeResponse = RefCategoryTypeResponse.builder()
@@ -110,16 +107,16 @@ public class RefTypesService {
         }
 
         if (usedInTxnsOnly) {
-            TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, null, true);
+            TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, null, true);
             refCategoryTypeResponse = CategoryTypeHelper.applyUsedInTransactionsOnlyFilter(refCategoryTypeResponse.getRefCategoryTypes(), transactionResponse.getTransactions());
         }
 
         return refCategoryTypeResponse;
     }
 
-    public static RefTransactionTypeResponse getAllTransactionTypes() {
+    public RefTransactionTypeResponse getAllTransactionTypes() {
         try {
-            return RefTypesConnector.getAllTransactionTypes();
+            return new RefTypesConnector().getAllTransactionTypes();
         } catch (Exception ex) {
             log.error("Exception in Get All Transaction Types", ex);
             return RefTransactionTypeResponse.builder()
@@ -131,11 +128,11 @@ public class RefTypesService {
         }
     }
 
-    public static CompletableFuture<RefTransactionTypeResponse> getAllTransactionTypesFuture() {
-        return CompletableFuture.supplyAsync(RefTypesService::getAllTransactionTypes);
+    public CompletableFuture<RefTransactionTypeResponse> getAllTransactionTypesFuture() {
+        return CompletableFuture.supplyAsync(this::getAllTransactionTypes);
     }
 
-    private static void applyAllDetails(RefCategoryResponse categoryResponse) {
+    private void applyAllDetails(RefCategoryResponse categoryResponse) {
         RefCategoryTypeResponse categoryTypeResponse = getAllCategoryTypes(null, false);
         CategoryHelper.applyAllDetailsStatic(categoryResponse, categoryTypeResponse.getRefCategoryTypes());
     }

@@ -1,23 +1,19 @@
 package pets.service.app.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.MerchantConnector;
 import pets.service.app.model.*;
 import pets.service.app.util.MerchantHelper;
-import pets.service.app.util.Util;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MerchantService {
 
-    public static RefMerchantResponse getMerchantById(String id) {
+    public RefMerchantResponse getMerchantById(String id) {
         try {
-            return MerchantConnector.getMerchantById(id);
+            return new MerchantConnector().getMerchantById(id);
         } catch (Exception ex) {
             log.error("Exception in Get Merchant by Id: {}", id);
             return RefMerchantResponse.builder()
@@ -29,15 +25,15 @@ public class MerchantService {
         }
     }
 
-    public static CompletableFuture<RefMerchantResponse> getMerchantsByUserFuture(String username) {
+    public CompletableFuture<RefMerchantResponse> getMerchantsByUserFuture(String username) {
         return CompletableFuture.supplyAsync(() -> getMerchantsByUser(username, null));
     }
 
-    public static RefMerchantResponse getMerchantsByUser(String username, RefMerchantFilters refMerchantFilters) {
+    public RefMerchantResponse getMerchantsByUser(String username, RefMerchantFilters refMerchantFilters) {
         RefMerchantResponse refMerchantResponse;
 
         try {
-            refMerchantResponse = MerchantConnector.getMerchantsByUser(username);
+            refMerchantResponse = new MerchantConnector().getMerchantsByUser(username);
         } catch (Exception ex) {
             log.error("Exception in Get Merchant by Username: {}", username);
             refMerchantResponse = RefMerchantResponse.builder()
@@ -52,7 +48,7 @@ public class MerchantService {
             MerchantHelper.setSystemDependentMerchants(refMerchantResponse);
             refMerchantResponse.setRefMerchantsFilterList(MerchantHelper.getRefMerchantsFilterListByName(refMerchantResponse));
 
-            TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, null, false);
+            TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, null, false);
             refMerchantResponse.setRefMerchantsNotUsedInTransactions(
                     MerchantHelper.getRefMerchantsNotUsedInTransactions(refMerchantResponse.getRefMerchants(),
                             transactionResponse.getTransactions()));
@@ -66,9 +62,9 @@ public class MerchantService {
         return refMerchantResponse;
     }
 
-    public static RefMerchantResponse saveNewMerchant(RefMerchantRequest refMerchantRequest) {
+    public RefMerchantResponse saveNewMerchant(RefMerchantRequest refMerchantRequest) {
         try {
-            return MerchantConnector.saveNewMerchant(refMerchantRequest);
+            return new MerchantConnector().saveNewMerchant(refMerchantRequest);
         } catch (Exception ex) {
             log.error("Exception in Save New Merchant: {}", refMerchantRequest);
             return RefMerchantResponse.builder()
@@ -80,9 +76,9 @@ public class MerchantService {
         }
     }
 
-    public static RefMerchantResponse deleteMerchant(String username, String id) {
+    public RefMerchantResponse deleteMerchant(String username, String id) {
         RefMerchantResponse refMerchantResponse;
-        TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, null, false);
+        TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, null, false);
 
         if (transactionResponse.getStatus() == null) {
             Transaction usedTransaction = transactionResponse.getTransactions().stream()
@@ -92,7 +88,7 @@ public class MerchantService {
 
             if (usedTransaction == null) {
                 try {
-                    refMerchantResponse = MerchantConnector.deleteMerchant(id);
+                    refMerchantResponse = new MerchantConnector().deleteMerchant(id);
                 } catch (Exception ex) {
                     log.error("Exception in Delete Merchant: {}", id, ex);
                     refMerchantResponse = RefMerchantResponse.builder()
@@ -124,15 +120,9 @@ public class MerchantService {
         return refMerchantResponse;
     }
 
-    public static boolean isValidMerchantRequest(RefMerchantRequest refMerchantRequest) {
-        return refMerchantRequest != null &&
-                Util.hasText(refMerchantRequest.getUsername()) &&
-                Util.hasText(refMerchantRequest.getDescription());
-    }
-
-    public static RefMerchantResponse updateMerchant(String id, RefMerchantRequest merchantRequest) {
+    public RefMerchantResponse updateMerchant(String id, RefMerchantRequest merchantRequest) {
         try {
-            return MerchantConnector.updateMerchant(id, merchantRequest);
+            return new MerchantConnector().updateMerchant(id, merchantRequest);
         } catch (Exception ex) {
             log.error("Exception in Update Merchant: {} | {}", id, merchantRequest, ex);
             return RefMerchantResponse.builder()

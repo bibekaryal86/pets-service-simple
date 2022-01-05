@@ -14,6 +14,20 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class MerchantServletCRUD extends HttpServlet {
+    private String getPostRequestType(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private boolean isValidMerchantRequest(RefMerchantRequest refMerchantRequest) {
+        return refMerchantRequest != null &&
+                Util.hasText(refMerchantRequest.getUsername()) &&
+                Util.hasText(refMerchantRequest.getDescription());
+    }
+
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
                                    boolean isDelete, boolean isSave, boolean isUpdate) throws IOException {
         String errMsg = null;
@@ -29,12 +43,12 @@ public class MerchantServletCRUD extends HttpServlet {
 
                 if (Util.hasText(id)) {
                     if (isDelete) {
-                        refMerchantResponse = MerchantService.deleteMerchant(username, id);
+                        refMerchantResponse = new MerchantService().deleteMerchant(username, id);
                     } else {
                         RefMerchantRequest refMerchantRequest = (RefMerchantRequest) Util.getRequestBody(request, RefMerchantRequest.class);
 
-                        if (MerchantService.isValidMerchantRequest(refMerchantRequest)) {
-                            refMerchantResponse = MerchantService.updateMerchant(id, refMerchantRequest);
+                        if (isValidMerchantRequest(refMerchantRequest)) {
+                            refMerchantResponse = new MerchantService().updateMerchant(id, refMerchantRequest);
                         } else {
                             errMsg = "Error Processing Update Request! Invalid Request Body";
                         }
@@ -45,8 +59,8 @@ public class MerchantServletCRUD extends HttpServlet {
             } else if (isSave) {
                 RefMerchantRequest refMerchantRequest = (RefMerchantRequest) Util.getRequestBody(request, RefMerchantRequest.class);
 
-                if (MerchantService.isValidMerchantRequest(refMerchantRequest)) {
-                    refMerchantResponse = MerchantService.saveNewMerchant(refMerchantRequest);
+                if (isValidMerchantRequest(refMerchantRequest)) {
+                    refMerchantResponse = new MerchantService().saveNewMerchant(refMerchantRequest);
                 } else {
                     errMsg = "Error Processing Save Request! Invalid Request Body";
                 }
@@ -78,13 +92,6 @@ public class MerchantServletCRUD extends HttpServlet {
         response.getWriter().print(Util.getGson().toJson(refMerchantResponse));
     }
 
-    private String getPostRequestType(String requestUri) {
-        try {
-            return requestUri.split("/")[4];
-        } catch (Exception ex) {
-            return null;
-        }
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -117,10 +124,10 @@ public class MerchantServletCRUD extends HttpServlet {
             String id = request.getParameter("id");
 
             if (Util.hasText(id)) {
-                refMerchantResponse = MerchantService.getMerchantById(id);
+                refMerchantResponse = new MerchantService().getMerchantById(id);
             } else {
                 RefMerchantFilters refMerchantFilters = (RefMerchantFilters) Util.getRequestBody(request, RefMerchantFilters.class);
-                refMerchantResponse = MerchantService.getMerchantsByUser(username, refMerchantFilters);
+                refMerchantResponse = new MerchantService().getMerchantsByUser(username, refMerchantFilters);
             }
 
             if (refMerchantResponse.getStatus() == null) {

@@ -12,42 +12,42 @@ import java.util.Map;
 
 public class TransactionConnector {
 
-    public static TransactionResponse getTransactionById(@NonNull final String id) {
+    public TransactionResponse getTransactionById(@NonNull final String id) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String getTransactionByIdUrl = EndpointUtil.endpointMap().get("getTransactionByIdUrl");
         String endpoint = String.format(getTransactionByIdUrl, id);
         return (TransactionResponse) ConnectorUtil.sendHttpRequest(endpoint, HttpMethod.GET, null, headers, TransactionResponse.class);
     }
 
-    public static TransactionResponse getTransactionsByUser(@NonNull final String username) {
+    public TransactionResponse getTransactionsByUser(@NonNull final String username) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String getTransactionsByUserUrl = EndpointUtil.endpointMap().get("getTransactionsByUserUrl");
         String endpoint = String.format(getTransactionsByUserUrl, username);
         return (TransactionResponse) ConnectorUtil.sendHttpRequest(endpoint, HttpMethod.GET, null, headers, TransactionResponse.class);
     }
 
-    public static TransactionResponse saveNewTransaction(@NonNull final TransactionRequest transactionRequest) {
+    public TransactionResponse saveNewTransaction(@NonNull final TransactionRequest transactionRequest) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("saveNewTransactionUrl");
         return (TransactionResponse) ConnectorUtil.sendHttpRequest(endpoint, HttpMethod.POST, transactionRequest, headers, TransactionResponse.class);
     }
 
-    public static TransactionResponse updateTransaction(@NonNull final String id,
-                                                        @NonNull final TransactionRequest transactionRequest) {
+    public TransactionResponse updateTransaction(@NonNull final String id,
+                                                 @NonNull final TransactionRequest transactionRequest) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String updateTransactionPutUrl = EndpointUtil.endpointMap().get("updateTransactionPutUrl");
         String endpoint = String.format(updateTransactionPutUrl, id);
         return (TransactionResponse) ConnectorUtil.sendHttpRequest(endpoint, HttpMethod.PUT, transactionRequest, headers, TransactionResponse.class);
     }
 
-    public static TransactionResponse deleteTransaction(@NonNull final String id) {
+    public TransactionResponse deleteTransaction(@NonNull final String id) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String deleteTransactionUrl = EndpointUtil.endpointMap().get("deleteTransactionUrl");
         String endpoint = String.format(deleteTransactionUrl, id);
         return (TransactionResponse) ConnectorUtil.sendHttpRequest(endpoint, HttpMethod.DELETE, null, headers, TransactionResponse.class);
     }
 
-    public static TransactionResponse deleteTransactionsByAccount(@NonNull final String accountId) {
+    public TransactionResponse deleteTransactionsByAccount(@NonNull final String accountId) {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String deleteTransactionsByAccountUrl = EndpointUtil.endpointMap().get("deleteTransactionsByAccountUrl");
         String endpoint = String.format(deleteTransactionsByAccountUrl, accountId);

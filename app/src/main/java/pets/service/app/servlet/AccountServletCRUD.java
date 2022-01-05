@@ -14,6 +14,23 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class AccountServletCRUD extends HttpServlet {
+    private String getPostRequestType(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private boolean isValidAccountRequest(AccountRequest accountRequest) {
+        return accountRequest != null &&
+                Util.hasText(accountRequest.getUsername()) &&
+                Util.hasText(accountRequest.getDescription()) &&
+                Util.hasText(accountRequest.getTypeId()) &&
+                Util.hasText(accountRequest.getBankId()) &&
+                Util.hasText(accountRequest.getStatus());
+    }
+
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
                                    boolean isDelete, boolean isSave, boolean isUpdate) throws IOException {
         String errMsg = null;
@@ -29,12 +46,12 @@ public class AccountServletCRUD extends HttpServlet {
 
                 if (Util.hasText(id)) {
                     if (isDelete) {
-                        accountResponse = AccountService.deleteAccount(username, id);
+                        accountResponse = new AccountService().deleteAccount(username, id);
                     } else {
                         AccountRequest accountRequest = (AccountRequest) Util.getRequestBody(request, AccountRequest.class);
 
-                        if (AccountService.isValidAccountRequest(accountRequest)) {
-                            accountResponse = AccountService.updateAccount(username, id, accountRequest, true);
+                        if (isValidAccountRequest(accountRequest)) {
+                            accountResponse = new AccountService().updateAccount(username, id, accountRequest, true);
                         } else {
                             errMsg = "Error Processing Update Request! Invalid Request Body";
                         }
@@ -45,8 +62,8 @@ public class AccountServletCRUD extends HttpServlet {
             } else if (isSave) {
                 AccountRequest accountRequest = (AccountRequest) Util.getRequestBody(request, AccountRequest.class);
 
-                if (AccountService.isValidAccountRequest(accountRequest)) {
-                    accountResponse = AccountService.saveNewAccount(username, accountRequest, true);
+                if (isValidAccountRequest(accountRequest)) {
+                    accountResponse = new AccountService().saveNewAccount(username, accountRequest, true);
                 } else {
                     errMsg = "Error Processing Save Request! Invalid Request Body";
                 }
@@ -78,13 +95,6 @@ public class AccountServletCRUD extends HttpServlet {
         response.getWriter().print(Util.getGson().toJson(accountResponse));
     }
 
-    private String getPostRequestType(String requestUri) {
-        try {
-            return requestUri.split("/")[4];
-        } catch (Exception ex) {
-            return null;
-        }
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -118,10 +128,10 @@ public class AccountServletCRUD extends HttpServlet {
             String id = request.getParameter("id");
 
             if (Util.hasText(id)) {
-                accountResponse = AccountService.getAccountById(username, id, true);
+                accountResponse = new AccountService().getAccountById(username, id, true);
             } else {
                 AccountFilters accountFilters = (AccountFilters) Util.getRequestBody(request, AccountFilters.class);
-                accountResponse = AccountService.getAccountsByUser(username, accountFilters, true);
+                accountResponse = new AccountService().getAccountsByUser(username, accountFilters, true);
             }
 
             if (accountResponse.getStatus() == null) {

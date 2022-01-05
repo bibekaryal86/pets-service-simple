@@ -20,7 +20,7 @@ public class BankServletR extends HttpServlet {
         String username = Util.getRequestPathParameter(request, 5, 3);
 
         if (Util.hasText(username)) {
-            refBankResponse = RefTypesService.getAllBanks();
+            refBankResponse = new RefTypesService().getAllBanks();
 
             if (refBankResponse.getStatus() == null) {
                 response.setStatus(200);

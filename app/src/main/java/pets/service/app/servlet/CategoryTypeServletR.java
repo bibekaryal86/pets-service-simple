@@ -21,7 +21,7 @@ public class CategoryTypeServletR extends HttpServlet {
         boolean usedInTxnsOnly = Boolean.parseBoolean(request.getParameter("usedInTxnsOnly"));
 
         if (Util.hasText(username)) {
-            refCategoryTypeResponse = RefTypesService.getAllCategoryTypes(username, usedInTxnsOnly);
+            refCategoryTypeResponse = new RefTypesService().getAllCategoryTypes(username, usedInTxnsOnly);
 
             if (refCategoryTypeResponse.getStatus() == null) {
                 response.setStatus(200);

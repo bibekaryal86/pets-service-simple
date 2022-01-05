@@ -21,10 +21,10 @@ public class ReportsService {
 
     private static final String DATE_FORMAT = "%s-%s-%s";
 
-    public static ReportsResponse getCurrentBalancesReport(String username) {
+    public ReportsResponse getCurrentBalancesReport(String username) {
         ReportsResponse reportsResponse;
 
-        AccountResponse accountResponse = AccountService.getAccountsByUser(username, null, false);
+        AccountResponse accountResponse = new AccountService().getAccountsByUser(username, null, false);
 
         if (accountResponse.getStatus() == null) {
             reportsResponse = ReportsResponse.builder()
@@ -37,7 +37,7 @@ public class ReportsService {
         return reportsResponse;
     }
 
-    private static List<ReportCurrentBalances> calculateCurrentBalances(@NonNull List<Account> accounts) {
+    private List<ReportCurrentBalances> calculateCurrentBalances(@NonNull List<Account> accounts) {
         BigDecimal totalCash = accounts.stream()
                 .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_CASH))
                 .map(Account::getCurrentBalance)
@@ -104,14 +104,14 @@ public class ReportsService {
                         .build());
     }
 
-    public static ReportsResponse getCashFlowsReport(String username, String selectedYear) {
+    public ReportsResponse getCashFlowsReport(String username, String selectedYear) {
         ReportsResponse reportsResponse;
 
         TransactionFilters transactionFilters = TransactionFilters.builder()
                 .dateFrom(String.format(DATE_FORMAT, selectedYear, "01", "01"))
                 .dateTo(String.format(DATE_FORMAT, selectedYear, "12", "31"))
                 .build();
-        TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, transactionFilters, false);
+        TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, transactionFilters, false);
 
         if (transactionResponse.getStatus() == null) {
             reportsResponse = ReportsResponse.builder()
@@ -124,7 +124,7 @@ public class ReportsService {
         return reportsResponse;
     }
 
-    private static List<ReportCashFlows> calculateCashFlows(@NonNull List<Transaction> transactions, String selectedYear) {
+    private List<ReportCashFlows> calculateCashFlows(@NonNull List<Transaction> transactions, String selectedYear) {
         List<ReportCashFlows> reportCashFlows = new ArrayList<>();
 
         Set<Month> months = transactions.stream()
@@ -143,7 +143,7 @@ public class ReportsService {
         return reportCashFlows;
     }
 
-    private static ReportCashFlows calculateCashFlow(List<Transaction> monthlyTransactions, Month month, int selectedYear) {
+    private ReportCashFlows calculateCashFlow(List<Transaction> monthlyTransactions, Month month, int selectedYear) {
         BigDecimal totalIncomes = monthlyTransactions.stream()
                 .filter(transaction -> transaction.getRefTransactionType().getId().equals(Util.TRANSACTION_TYPE_ID_INCOME)
                         && !transaction.getRefCategory().getId().equals(Util.CATEGORY_ID_REFUNDS))
@@ -173,14 +173,14 @@ public class ReportsService {
                 .build();
     }
 
-    public static ReportsResponse getCategoriesReport(String username, String selectedYear) {
+    public ReportsResponse getCategoriesReport(String username, String selectedYear) {
         ReportsResponse reportsResponse;
 
         TransactionFilters transactionFilters = TransactionFilters.builder()
                 .dateFrom(String.format(DATE_FORMAT, selectedYear, "01", "01"))
                 .dateTo(String.format(DATE_FORMAT, selectedYear, "12", "31"))
                 .build();
-        TransactionResponse transactionResponse = TransactionService.getTransactionsByUser(username, transactionFilters, true);
+        TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, transactionFilters, true);
 
         if (transactionResponse.getStatus() == null) {
             reportsResponse = ReportsResponse.builder()
@@ -193,7 +193,7 @@ public class ReportsService {
         return reportsResponse;
     }
 
-    private static List<ReportCategoryTypes> calculateCategoryTypesTotals(@NonNull List<Transaction> transactions) {
+    private List<ReportCategoryTypes> calculateCategoryTypesTotals(@NonNull List<Transaction> transactions) {
         List<ReportCategoryTypes> reportCategoryTypes = new ArrayList<>();
 
         Set<RefCategoryType> refCategoryTypes = transactions.stream()
@@ -213,7 +213,7 @@ public class ReportsService {
         return reportCategoryTypes;
     }
 
-    private static ReportCategoryTypes calculateCategoryTypesTotals(List<Transaction> categoryTypeTransactions, RefCategoryType refCategoryType) {
+    private ReportCategoryTypes calculateCategoryTypesTotals(List<Transaction> categoryTypeTransactions, RefCategoryType refCategoryType) {
         BigDecimal totalCategoryType = categoryTypeTransactions.stream()
                 .filter(transaction -> transaction.getRefCategory().getRefCategoryType().getId().equals(refCategoryType.getId()))
                 .map(Transaction::getAmount)
@@ -226,7 +226,7 @@ public class ReportsService {
                 .build();
     }
 
-    private static List<ReportCategories> calculateCategoriesTotals(List<Transaction> categoryTypeTransactions) {
+    private List<ReportCategories> calculateCategoriesTotals(List<Transaction> categoryTypeTransactions) {
         List<ReportCategories> reportCategories = new ArrayList<>();
 
         Set<RefCategory> refCategories = categoryTypeTransactions.stream()
@@ -245,7 +245,7 @@ public class ReportsService {
         return reportCategories;
     }
 
-    private static ReportCategories calculateCategoriesTotals(List<Transaction> categoryTransactions, RefCategory refCategory) {
+    private ReportCategories calculateCategoriesTotals(List<Transaction> categoryTransactions, RefCategory refCategory) {
         BigDecimal totalCategory = categoryTransactions.stream()
                 .filter(transaction -> transaction.getRefCategory().getId().equals(refCategory.getId()))
                 .map(Transaction::getAmount)
@@ -260,7 +260,7 @@ public class ReportsService {
                 .build();
     }
 
-    private static ReportsResponse reportResponseError(String errMsg, String message) {
+    private ReportsResponse reportResponseError(String errMsg, String message) {
         return ReportsResponse.builder()
                 .status(Status.builder()
                         .errMsg(String.format("Something Went Wrong! Error Retrieving %s Report!! Please Try Again!!!", errMsg))
@@ -269,11 +269,5 @@ public class ReportsService {
                 .build();
     }
 
-    public static String findReportTypeRequest(String requestUri) {
-        try {
-            return requestUri.split("/")[4];
-        } catch (Exception ex) {
-            return null;
-        }
-    }
+
 }

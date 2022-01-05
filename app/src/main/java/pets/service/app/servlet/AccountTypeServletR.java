@@ -20,7 +20,7 @@ public class AccountTypeServletR extends HttpServlet {
         String username = Util.getRequestPathParameter(request, 5, 3);
 
         if (Util.hasText(username)) {
-            refAccountTypeResponse = RefTypesService.getAllAccountTypes();
+            refAccountTypeResponse = new RefTypesService().getAllAccountTypes();
 
             if (refAccountTypeResponse.getStatus() == null) {
                 response.setStatus(200);

@@ -1,7 +1,5 @@
 package pets.service.app.connector;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.eclipse.jetty.http.HttpMethod;
 import pets.service.app.model.*;
 import pets.service.app.util.ConnectorUtil;
@@ -11,7 +9,6 @@ import pets.service.app.util.Util;
 import java.util.Map;
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefTypesConnector {
 
     private static RefAccountTypeResponse refAccountTypeResponse = null;
@@ -28,27 +25,27 @@ public class RefTypesConnector {
         refTransactionTypeResponse = null;
     }
 
-    public static RefAccountTypeResponse getAllAccountTypes() {
-        return Objects.requireNonNullElseGet(refAccountTypeResponse, RefTypesConnector::getAllAccountTypesHttp);
+    public RefAccountTypeResponse getAllAccountTypes() {
+        return Objects.requireNonNullElseGet(refAccountTypeResponse, this::getAllAccountTypesHttp);
     }
 
-    public static RefBankResponse getAllBanks() {
-        return Objects.requireNonNullElseGet(refBankResponse, RefTypesConnector::getAllBanksHttp);
+    public RefBankResponse getAllBanks() {
+        return Objects.requireNonNullElseGet(refBankResponse, this::getAllBanksHttp);
     }
 
-    public static RefCategoryResponse getAllCategories() {
-        return Objects.requireNonNullElseGet(refCategoryResponse, RefTypesConnector::getAllCategoriesHttp);
+    public RefCategoryResponse getAllCategories() {
+        return Objects.requireNonNullElseGet(refCategoryResponse, this::getAllCategoriesHttp);
     }
 
-    public static RefCategoryTypeResponse getAllCategoryTypes() {
-        return Objects.requireNonNullElseGet(refCategoryTypeResponse, RefTypesConnector::getAllCategoryTypesHttp);
+    public RefCategoryTypeResponse getAllCategoryTypes() {
+        return Objects.requireNonNullElseGet(refCategoryTypeResponse, this::getAllCategoryTypesHttp);
     }
 
-    public static RefTransactionTypeResponse getAllTransactionTypes() {
-        return Objects.requireNonNullElseGet(refTransactionTypeResponse, RefTypesConnector::getAllTransactionTypesHttp);
+    public RefTransactionTypeResponse getAllTransactionTypes() {
+        return Objects.requireNonNullElseGet(refTransactionTypeResponse, this::getAllTransactionTypesHttp);
     }
 
-    private static RefAccountTypeResponse getAllAccountTypesHttp() {
+    private RefAccountTypeResponse getAllAccountTypesHttp() {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("getAllAccountTypesUrl");
         refAccountTypeResponse = (RefAccountTypeResponse) ConnectorUtil.sendHttpRequest(
@@ -56,7 +53,7 @@ public class RefTypesConnector {
         return refAccountTypeResponse;
     }
 
-    private static RefBankResponse getAllBanksHttp() {
+    private RefBankResponse getAllBanksHttp() {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("getAllBanksUrl");
         refBankResponse = (RefBankResponse) ConnectorUtil.sendHttpRequest(
@@ -64,7 +61,7 @@ public class RefTypesConnector {
         return refBankResponse;
     }
 
-    private static RefCategoryResponse getAllCategoriesHttp() {
+    private RefCategoryResponse getAllCategoriesHttp() {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("getAllCategoriesUrl");
         refCategoryResponse = (RefCategoryResponse) ConnectorUtil.sendHttpRequest(
@@ -72,7 +69,7 @@ public class RefTypesConnector {
         return refCategoryResponse;
     }
 
-    private static RefCategoryTypeResponse getAllCategoryTypesHttp() {
+    private RefCategoryTypeResponse getAllCategoryTypesHttp() {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("getAllCategoryTypesUrl");
         refCategoryTypeResponse = (RefCategoryTypeResponse) ConnectorUtil.sendHttpRequest(
@@ -80,7 +77,7 @@ public class RefTypesConnector {
         return refCategoryTypeResponse;
     }
 
-    private static RefTransactionTypeResponse getAllTransactionTypesHttp() {
+    private RefTransactionTypeResponse getAllTransactionTypesHttp() {
         Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
         String endpoint = EndpointUtil.endpointMap().get("getAllTransactionTypesUrl");
         refTransactionTypeResponse = (RefTransactionTypeResponse) ConnectorUtil.sendHttpRequest(

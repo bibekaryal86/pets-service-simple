@@ -1,7 +1,5 @@
 package pets.service.app.service;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.TransactionConnector;
 import pets.service.app.model.*;
@@ -12,14 +10,13 @@ import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TransactionService {
 
-    public static TransactionResponse getTransactionById(String username, String id, boolean applyAllDetails) {
+    public TransactionResponse getTransactionById(String username, String id, boolean applyAllDetails) {
         TransactionResponse transactionResponse;
 
         try {
-            transactionResponse = TransactionConnector.getTransactionById(id);
+            transactionResponse = new TransactionConnector().getTransactionById(id);
         } catch (Exception ex) {
             log.error("Exception in Get Transaction by Id: {} | {} | {}", username, id, applyAllDetails);
             transactionResponse = TransactionResponse.builder()
@@ -37,13 +34,13 @@ public class TransactionService {
         return transactionResponse;
     }
 
-    public static TransactionResponse getTransactionsByUser(String username,
-                                                            TransactionFilters transactionFilters,
-                                                            boolean applyAllDetails) {
+    public TransactionResponse getTransactionsByUser(String username,
+                                                     TransactionFilters transactionFilters,
+                                                     boolean applyAllDetails) {
         TransactionResponse transactionResponse;
 
         try {
-            transactionResponse = TransactionConnector.getTransactionsByUser(username);
+            transactionResponse = new TransactionConnector().getTransactionsByUser(username);
         } catch (Exception ex) {
             log.error("Exception in Get Transactions By User: {} | {} | {}", username, transactionFilters, applyAllDetails);
             transactionResponse = TransactionResponse.builder()
@@ -67,15 +64,15 @@ public class TransactionService {
         return transactionResponse;
     }
 
-    public static TransactionResponse saveNewTransaction(String username,
-                                                         TransactionRequest transactionRequest,
-                                                         boolean applyAllDetails) {
+    public TransactionResponse saveNewTransaction(String username,
+                                                  TransactionRequest transactionRequest,
+                                                  boolean applyAllDetails) {
         TransactionResponse transactionResponse;
 
         // check if user selected to enter a new merchant
         if (Util.hasText(transactionRequest.getNewMerchant())) {
             // save merchant first and set it as merchant id in transaction request
-            RefMerchantResponse refMerchantResponse = MerchantService.saveNewMerchant(RefMerchantRequest.builder()
+            RefMerchantResponse refMerchantResponse = new MerchantService().saveNewMerchant(RefMerchantRequest.builder()
                     .username(username)
                     .description(transactionRequest.getNewMerchant())
                     .build());
@@ -97,7 +94,7 @@ public class TransactionService {
         }
 
         try {
-            transactionResponse = TransactionConnector.saveNewTransaction(transactionRequest);
+            transactionResponse = new TransactionConnector().saveNewTransaction(transactionRequest);
         } catch (Exception ex) {
             log.error("Exception in Save New Transaction: {} | {} | {}", username, transactionRequest, applyAllDetails);
             transactionResponse = TransactionResponse.builder()
@@ -116,15 +113,15 @@ public class TransactionService {
         return transactionResponse;
     }
 
-    public static TransactionResponse updateTransaction(String username, String id,
-                                                        TransactionRequest transactionRequest,
-                                                        boolean applyAllDetails) {
+    public TransactionResponse updateTransaction(String username, String id,
+                                                 TransactionRequest transactionRequest,
+                                                 boolean applyAllDetails) {
         TransactionResponse transactionResponse;
 
         // check if user selected to enter a new merchant
         if (Util.hasText(transactionRequest.getNewMerchant())) {
             // save merchant first and set it as merchant id in transaction request
-            RefMerchantResponse merchantResponse = MerchantService.saveNewMerchant(RefMerchantRequest.builder()
+            RefMerchantResponse merchantResponse = new MerchantService().saveNewMerchant(RefMerchantRequest.builder()
                     .username(username)
                     .description(transactionRequest.getNewMerchant())
                     .build());
@@ -146,7 +143,7 @@ public class TransactionService {
         }
 
         try {
-            transactionResponse = TransactionConnector.updateTransaction(id, transactionRequest);
+            transactionResponse = new TransactionConnector().updateTransaction(id, transactionRequest);
         } catch (Exception ex) {
             log.error("Exception in Update Transaction: {} | {} | {} | {}", username, id, transactionRequest, applyAllDetails);
             transactionResponse = TransactionResponse.builder()
@@ -164,9 +161,9 @@ public class TransactionService {
         return transactionResponse;
     }
 
-    public static TransactionResponse deleteTransaction(String id) {
+    public TransactionResponse deleteTransaction(String id) {
         try {
-            return TransactionConnector.deleteTransaction(id);
+            return new TransactionConnector().deleteTransaction(id);
         } catch (Exception ex) {
             log.error("Exception in Delete Transaction: {}", id);
             return TransactionResponse.builder()
@@ -178,9 +175,9 @@ public class TransactionService {
         }
     }
 
-    public static TransactionResponse deleteTransactionsByAccount(String accountId) {
+    public TransactionResponse deleteTransactionsByAccount(String accountId) {
         try {
-            return TransactionConnector.deleteTransactionsByAccount(accountId);
+            return new TransactionConnector().deleteTransactionsByAccount(accountId);
         } catch (Exception ex) {
             log.error("Exception in Delete Transactions by Account: {}", accountId);
             return TransactionResponse.builder()
@@ -192,24 +189,15 @@ public class TransactionService {
         }
     }
 
-    private static void applyAllDetails(String username, TransactionResponse transactionResponse) {
-        CompletableFuture<AccountResponse> accountResponseCompletableFuture = AccountService.getAccountsByUserFuture(username);
-        CompletableFuture<RefCategoryResponse> refCategoryResponseCompletableFuture = RefTypesService.getAllCategoriesFuture();
-        CompletableFuture<RefMerchantResponse> refMerchantResponseCompletableFuture = MerchantService.getMerchantsByUserFuture(username);
-        CompletableFuture<RefTransactionTypeResponse> refTransactionTypeResponseCompletableFuture = RefTypesService.getAllTransactionTypesFuture();
+    private void applyAllDetails(String username, TransactionResponse transactionResponse) {
+        CompletableFuture<AccountResponse> accountResponseCompletableFuture = new AccountService().getAccountsByUserFuture(username);
+        CompletableFuture<RefCategoryResponse> refCategoryResponseCompletableFuture = new RefTypesService().getAllCategoriesFuture();
+        CompletableFuture<RefMerchantResponse> refMerchantResponseCompletableFuture = new MerchantService().getMerchantsByUserFuture(username);
+        CompletableFuture<RefTransactionTypeResponse> refTransactionTypeResponseCompletableFuture = new RefTypesService().getAllTransactionTypesFuture();
 
         TransactionHelper.applyAllDetailsStatic(transactionResponse, accountResponseCompletableFuture, refCategoryResponseCompletableFuture,
                 refMerchantResponseCompletableFuture, refTransactionTypeResponseCompletableFuture);
     }
 
-    public static boolean isValidTransactionRequest(TransactionRequest transactionRequest) {
-        return transactionRequest != null &&
-                Util.hasText(transactionRequest.getAccountId()) &&
-                Util.hasText(transactionRequest.getTypeId()) &&
-                Util.hasText(transactionRequest.getCategoryId()) &&
-                (Util.hasText(transactionRequest.getMerchantId()) ||
-                        Util.hasText(transactionRequest.getNewMerchant())) &&
-                Util.hasText(transactionRequest.getUsername()) &&
-                Util.hasText(transactionRequest.getDate());
-    }
+
 }

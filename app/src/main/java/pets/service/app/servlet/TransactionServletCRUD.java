@@ -14,6 +14,25 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class TransactionServletCRUD extends HttpServlet {
+    private String getPostRequestType(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private boolean isValidTransactionRequest(TransactionRequest transactionRequest) {
+        return transactionRequest != null &&
+                Util.hasText(transactionRequest.getAccountId()) &&
+                Util.hasText(transactionRequest.getTypeId()) &&
+                Util.hasText(transactionRequest.getCategoryId()) &&
+                (Util.hasText(transactionRequest.getMerchantId()) ||
+                        Util.hasText(transactionRequest.getNewMerchant())) &&
+                Util.hasText(transactionRequest.getUsername()) &&
+                Util.hasText(transactionRequest.getDate());
+    }
+
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
                                    boolean isDelete, boolean isSave, boolean isUpdate) throws IOException {
         String errMsg = null;
@@ -29,12 +48,12 @@ public class TransactionServletCRUD extends HttpServlet {
 
                 if (Util.hasText(id)) {
                     if (isDelete) {
-                        transactionResponse = TransactionService.deleteTransaction(id);
+                        transactionResponse = new TransactionService().deleteTransaction(id);
                     } else {
                         TransactionRequest transactionRequest = (TransactionRequest) Util.getRequestBody(request, TransactionRequest.class);
 
-                        if (TransactionService.isValidTransactionRequest(transactionRequest)) {
-                            transactionResponse = TransactionService.updateTransaction(username, id, transactionRequest, true);
+                        if (isValidTransactionRequest(transactionRequest)) {
+                            transactionResponse = new TransactionService().updateTransaction(username, id, transactionRequest, true);
                         } else {
                             errMsg = "Error Processing Update Request! Invalid Request Body";
                         }
@@ -45,8 +64,8 @@ public class TransactionServletCRUD extends HttpServlet {
             } else if (isSave) {
                 TransactionRequest transactionRequest = (TransactionRequest) Util.getRequestBody(request, TransactionRequest.class);
 
-                if (TransactionService.isValidTransactionRequest(transactionRequest)) {
-                    transactionResponse = TransactionService.saveNewTransaction(username, transactionRequest, true);
+                if (isValidTransactionRequest(transactionRequest)) {
+                    transactionResponse = new TransactionService().saveNewTransaction(username, transactionRequest, true);
                 } else {
                     errMsg = "Error Processing Save Request! Invalid Request Body";
                 }
@@ -78,13 +97,6 @@ public class TransactionServletCRUD extends HttpServlet {
         response.getWriter().print(Util.getGson().toJson(transactionResponse));
     }
 
-    private String getPostRequestType(String requestUri) {
-        try {
-            return requestUri.split("/")[4];
-        } catch (Exception ex) {
-            return null;
-        }
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -117,10 +129,10 @@ public class TransactionServletCRUD extends HttpServlet {
             String id = request.getParameter("id");
 
             if (Util.hasText(id)) {
-                transactionResponse = TransactionService.getTransactionById(username, id, true);
+                transactionResponse = new TransactionService().getTransactionById(username, id, true);
             } else {
                 TransactionFilters transactionFilters = (TransactionFilters) Util.getRequestBody(request, TransactionFilters.class);
-                transactionResponse = TransactionService.getTransactionsByUser(username, transactionFilters, true);
+                transactionResponse = new TransactionService().getTransactionsByUser(username, transactionFilters, true);
             }
 
             if (transactionResponse.getStatus() == null) {

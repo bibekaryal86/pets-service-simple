@@ -20,7 +20,7 @@ public class TransactionTypeServletR extends HttpServlet {
         String username = Util.getRequestPathParameter(request, 5, 3);
 
         if (Util.hasText(username)) {
-            refTransactionTypeResponse = RefTypesService.getAllTransactionTypes();
+            refTransactionTypeResponse = new RefTypesService().getAllTransactionTypes();
 
             if (refTransactionTypeResponse.getStatus() == null) {
                 response.setStatus(200);

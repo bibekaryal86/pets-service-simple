@@ -22,7 +22,7 @@ public class CategoryServletR extends HttpServlet {
         RefCategoryFilters refCategoryFilters = (RefCategoryFilters) Util.getRequestBody(request, RefCategoryFilters.class);
 
         if (Util.hasText(username)) {
-            refCategoryResponse = RefTypesService.getAllCategories(username, refCategoryFilters);
+            refCategoryResponse = new RefTypesService().getAllCategories(username, refCategoryFilters);
 
             if (refCategoryResponse.getStatus() == null) {
                 response.setStatus(200);

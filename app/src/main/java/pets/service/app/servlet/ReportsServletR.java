@@ -12,6 +12,14 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class ReportsServletR extends HttpServlet {
+    private String findReportTypeRequest(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String errMsg = null;
@@ -22,18 +30,18 @@ public class ReportsServletR extends HttpServlet {
         String username = Util.getRequestPathParameter(request, 5, 3);
 
         if (Util.hasText(username)) {
-            String reportType = ReportsService.findReportTypeRequest(request.getRequestURI());
+            String reportType = findReportTypeRequest(request.getRequestURI());
 
             if ("currentbalances".equals(reportType)) {
-                reportsResponse = ReportsService.getCurrentBalancesReport(username);
+                reportsResponse = new ReportsService().getCurrentBalancesReport(username);
             } else {
                 String selectedYear = request.getParameter("selectedyear");
 
                 if (Util.hasText(selectedYear)) {
                     if ("cashflows".equals(reportType)) {
-                        reportsResponse = ReportsService.getCashFlowsReport(username, selectedYear);
+                        reportsResponse = new ReportsService().getCashFlowsReport(username, selectedYear);
                     } else if ("categories".equals(reportType)) {
-                        reportsResponse = ReportsService.getCategoriesReport(username, selectedYear);
+                        reportsResponse = new ReportsService().getCategoriesReport(username, selectedYear);
                     }
                 } else {
                     errMsg = String.format("Error Retrieving Reports by Invalid ReportType: %s", reportType);
