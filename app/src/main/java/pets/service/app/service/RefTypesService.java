@@ -68,10 +68,14 @@ public class RefTypesService {
         }
     }
 
+    public static CompletableFuture<RefCategoryResponse> getAllCategoriesFuture() {
+        return CompletableFuture.supplyAsync(() -> getAllCategories(null, null));
+    }
+
     public static RefCategoryTypeResponse getAllCategoryTypes(String username, boolean usedInTxnsOnly) {
         RefCategoryTypeResponse refCategoryTypeResponse;
         try {
-           return RefTypesConnector.getAllCategoryTypes();
+            return RefTypesConnector.getAllCategoryTypes();
         } catch (Exception ex) {
             log.error("Exception in Get All Category Types", ex);
             return RefCategoryTypeResponse.builder()
@@ -95,5 +99,9 @@ public class RefTypesService {
                             .build())
                     .build();
         }
+    }
+
+    public static CompletableFuture<RefTransactionTypeResponse> getAllTransactionTypesFuture() {
+        return CompletableFuture.supplyAsync(RefTypesService::getAllTransactionTypes);
     }
 }

@@ -13,13 +13,10 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EndpointUtil {
 
-    private static Map<String, String> theEndpointMap = null;
-
     // base_urls
     private static final String PETS_DB_ENDPOINT_BASE_DEV = "http://localhost:8002/pets-database";
     private static final String PETS_DB_ENDPOINT_BASE_DOCKER = "http://pets-database:8002/pets-database";
     private static final String PETS_DB_ENDPOINT_BASE_PROD = "https://pets-database.appspot.com/pets-database";
-
     // endpoint_bases
     private static final String PETS_DB_ACCOUNT_BASE = "/accounts/account";
     private static final String PETS_DB_ACCOUNT_TYPE_BASE = "/refaccounttypes/refaccounttype";
@@ -30,12 +27,12 @@ public class EndpointUtil {
     private static final String PETS_DB_TRANSACTION_BASE = "/transactions/transaction";
     private static final String PETS_DB_TRANSACTION_TYPE_BASE = "/reftransactiontypes/reftransactiontype";
     private static final String PETS_DB_USER_BASE = "/users/user";
-
     // endpoint_urls
     private static final String PETS_DB_URL_WITH_USERNAME = "/username/%s";
     private static final String PETS_DB_URL_WITH_USER = "/user/%s";
     private static final String PETS_DB_URL_WITH_ID = "/id/%s";
     private static final String PETS_DB_URL_WITH_ACCOUNT = "/accountid/%s";
+    private static Map<String, String> theEndpointMap = null;
 
     private static Map<String, String> setEndpointMap() {
         Map<String, String> endpointMap = new HashMap<>();
