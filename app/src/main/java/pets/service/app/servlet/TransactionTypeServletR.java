@@ -17,7 +17,7 @@ public class TransactionTypeServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request);
+        String username = Util.getRequestPathParameter(request, 5, 3);
 
         if (Util.hasText(username)) {
             refTransactionTypeResponse = RefTypesService.getAllTransactionTypes();

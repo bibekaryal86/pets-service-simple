@@ -17,7 +17,7 @@ public class CategoryTypeServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request);
+        String username = Util.getRequestPathParameter(request, 5, 3);
         boolean usedInTxnsOnly = Boolean.parseBoolean(request.getParameter("usedInTxnsOnly"));
 
         if (Util.hasText(username)) {

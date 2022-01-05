@@ -77,10 +77,10 @@ public class Util {
         return headersMap;
     }
 
-    public static String getRequestPathParameter(HttpServletRequest request) {
+    public static String getRequestPathParameter(HttpServletRequest request, int length, int position) {
         String[] requestUriArray = request.getRequestURI().split("/");
-        if (requestUriArray.length == 5 && hasText(requestUriArray[3])) {
-            return requestUriArray[3];
+        if (requestUriArray.length == length && hasText(requestUriArray[position])) {
+            return requestUriArray[position];
         }
         return null;
     }

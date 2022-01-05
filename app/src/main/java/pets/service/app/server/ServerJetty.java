@@ -35,6 +35,11 @@ public class ServerJetty {
         servletHandler.addServletWithMapping(AppPing.class, Util.CONTEXT_PATH + "/tests/ping");
         servletHandler.addServletWithMapping(AppReset.class, Util.CONTEXT_PATH + "/actuator/clearCaches");
 
+        // users
+        servletHandler.addServletWithMapping(UserServletC.class, Util.CONTEXT_PATH + "/users/user/");
+        servletHandler.addServletWithMapping(UserServletR.class, Util.CONTEXT_PATH + "/users/user/username/*");
+        servletHandler.addServletWithMapping(UserServletU.class, Util.CONTEXT_PATH + "/users/user/*");
+
         // ref types
         servletHandler.addServletWithMapping(AccountTypeServletR.class, Util.CONTEXT_PATH + "/accounttypes/*");
         servletHandler.addServletWithMapping(BankServletR.class, Util.CONTEXT_PATH + "/banks/*");

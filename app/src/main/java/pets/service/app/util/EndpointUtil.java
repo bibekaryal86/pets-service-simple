@@ -32,7 +32,8 @@ public class EndpointUtil {
     private static final String PETS_DB_USER_BASE = "/users/user";
 
     // endpoint_urls
-    private static final String PETS_DB_URL_WITH_USERNAME = "/user/%s";
+    private static final String PETS_DB_URL_WITH_USERNAME = "/username/%s";
+    private static final String PETS_DB_URL_WITH_USER = "/user/%s";
     private static final String PETS_DB_URL_WITH_ID = "/id/%s";
     private static final String PETS_DB_URL_WITH_ACCOUNT = "/accountid/%s";
 
@@ -53,9 +54,14 @@ public class EndpointUtil {
             endpointBasePetsDatabase = PETS_DB_ENDPOINT_BASE_PROD;
         }
 
+        // users
+        endpointMap.put("getUserByUsernameUrl", endpointBasePetsDatabase.concat(PETS_DB_USER_BASE).concat(PETS_DB_URL_WITH_USERNAME));
+        endpointMap.put("saveNewUserUrl", endpointBasePetsDatabase.concat(PETS_DB_USER_BASE));
+        endpointMap.put("updateUserPutUrl", endpointBasePetsDatabase.concat(PETS_DB_USER_BASE).concat(PETS_DB_URL_WITH_ID));
+
         // accounts
         endpointMap.put("getAccountByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
-        endpointMap.put("getAccountsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_USERNAME));
+        endpointMap.put("getAccountsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_USER));
         endpointMap.put("saveNewAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE));
         endpointMap.put("updateAccountPutUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
         endpointMap.put("deleteAccountUrl", endpointBasePetsDatabase.concat(PETS_DB_ACCOUNT_BASE).concat(PETS_DB_URL_WITH_ID));
@@ -69,14 +75,14 @@ public class EndpointUtil {
 
         // merchants
         endpointMap.put("getMerchantByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_ID));
-        endpointMap.put("getMerchantsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_USERNAME));
+        endpointMap.put("getMerchantsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_USER));
         endpointMap.put("saveNewMerchantUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE));
         endpointMap.put("updateMerchantUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_ID));
         endpointMap.put("deleteMerchantUrl", endpointBasePetsDatabase.concat(PETS_DB_MERCHANT_BASE).concat(PETS_DB_URL_WITH_ID));
 
         // transactions
         endpointMap.put("getTransactionByIdUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE).concat(PETS_DB_URL_WITH_ID));
-        endpointMap.put("getTransactionsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE).concat(PETS_DB_URL_WITH_USERNAME));
+        endpointMap.put("getTransactionsByUserUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE).concat(PETS_DB_URL_WITH_USER));
         endpointMap.put("saveNewTransactionUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE));
         endpointMap.put("updateTransactionPutUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE).concat(PETS_DB_URL_WITH_ID));
         endpointMap.put("deleteTransactionUrl", endpointBasePetsDatabase.concat(PETS_DB_TRANSACTION_BASE).concat(PETS_DB_URL_WITH_ID));
