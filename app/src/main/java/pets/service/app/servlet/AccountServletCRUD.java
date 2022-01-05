@@ -78,9 +78,23 @@ public class AccountServletCRUD extends HttpServlet {
         response.getWriter().print(Util.getGson().toJson(accountResponse));
     }
 
+    private String getPostRequestType(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doPostPutDelete(request, response, false, true, false);
+        String requestType = getPostRequestType(request.getRequestURI());
+
+        if ("user".equals(requestType)) {
+            doPostGet(request, response);
+        } else {
+            doPostPutDelete(request, response, false, true, false);
+        }
     }
 
     @Override
@@ -93,8 +107,7 @@ public class AccountServletCRUD extends HttpServlet {
         doPostPutDelete(request, response, true, false, false);
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPostGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         AccountResponse accountResponse;
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
