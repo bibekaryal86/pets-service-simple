@@ -268,4 +268,12 @@ public class ReportsService {
                         .build())
                 .build();
     }
+
+    public static String findReportTypeRequest(String requestUri) {
+        try {
+            return requestUri.split("/")[4];
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 }

@@ -127,9 +127,9 @@ public class AccountService {
                 Util.hasText(accountRequest.getStatus());
     }
 
-    public AccountResponse saveNewAccount(String username,
-                                          AccountRequest accountRequest,
-                                          boolean applyAllDetails) {
+    public static AccountResponse saveNewAccount(String username,
+                                                 AccountRequest accountRequest,
+                                                 boolean applyAllDetails) {
         AccountResponse accountResponse;
 
         try {
@@ -155,8 +155,8 @@ public class AccountService {
         return accountResponse;
     }
 
-    public AccountResponse updateAccount(String username, String id,
-                                         AccountRequest accountRequest, boolean applyAllDetails) {
+    public static AccountResponse updateAccount(String username, String id,
+                                                AccountRequest accountRequest, boolean applyAllDetails) {
         AccountResponse accountResponse;
 
         try {

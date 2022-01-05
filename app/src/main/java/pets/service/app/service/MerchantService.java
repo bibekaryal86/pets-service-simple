@@ -130,7 +130,7 @@ public class MerchantService {
                 Util.hasText(refMerchantRequest.getDescription());
     }
 
-    public RefMerchantResponse updateMerchant(String id, RefMerchantRequest merchantRequest) {
+    public static RefMerchantResponse updateMerchant(String id, RefMerchantRequest merchantRequest) {
         try {
             return MerchantConnector.updateMerchant(id, merchantRequest);
         } catch (Exception ex) {

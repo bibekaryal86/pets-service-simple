@@ -15,6 +15,28 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TransactionService {
 
+    public static TransactionResponse getTransactionById(String username, String id, boolean applyAllDetails) {
+        TransactionResponse transactionResponse;
+
+        try {
+            transactionResponse = TransactionConnector.getTransactionById(id);
+        } catch (Exception ex) {
+            log.error("Exception in Get Transaction by Id: {} | {} | {}", username, id, applyAllDetails);
+            transactionResponse = TransactionResponse.builder()
+                    .transactions(Collections.emptyList())
+                    .status(Status.builder()
+                            .errMsg("Transaction Unavailable! Please Try Again!!!")
+                            .build())
+                    .build();
+        }
+
+        if (!transactionResponse.getTransactions().isEmpty() && applyAllDetails) {
+            applyAllDetails(username, transactionResponse);
+        }
+
+        return transactionResponse;
+    }
+
     public static TransactionResponse getTransactionsByUser(String username,
                                                             TransactionFilters transactionFilters,
                                                             boolean applyAllDetails) {
@@ -189,28 +211,5 @@ public class TransactionService {
                         Util.hasText(transactionRequest.getNewMerchant())) &&
                 Util.hasText(transactionRequest.getUsername()) &&
                 Util.hasText(transactionRequest.getDate());
-    }
-
-    public TransactionResponse getTransactionById(String username, String id, boolean applyAllDetails) {
-        TransactionResponse transactionResponse;
-
-        try {
-            transactionResponse = TransactionConnector.getTransactionById(id);
-        } catch (Exception ex) {
-            log.error("Exception in Get Transaction by Id: {} | {} | {}", username, id, applyAllDetails);
-            transactionResponse = TransactionResponse.builder()
-                    .transactions(Collections.emptyList())
-                    .status(Status.builder()
-                            .errMsg("Transaction Unavailable! Please Try Again!!!")
-                            .build())
-                    .build();
-        }
-
-        if (!transactionResponse.getTransactions().isEmpty() &&
-                applyAllDetails) {
-            applyAllDetails(username, transactionResponse);
-        }
-
-        return transactionResponse;
     }
 }

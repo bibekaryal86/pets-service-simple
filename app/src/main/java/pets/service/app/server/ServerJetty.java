@@ -35,17 +35,27 @@ public class ServerJetty {
         servletHandler.addServletWithMapping(AppPing.class, Util.CONTEXT_PATH + "/tests/ping");
         servletHandler.addServletWithMapping(AppReset.class, Util.CONTEXT_PATH + "/actuator/clearCaches");
 
-        // users
-        servletHandler.addServletWithMapping(UserServletC.class, Util.CONTEXT_PATH + "/users/user/");
-        servletHandler.addServletWithMapping(UserServletR.class, Util.CONTEXT_PATH + "/users/user/username/*");
-        servletHandler.addServletWithMapping(UserServletU.class, Util.CONTEXT_PATH + "/users/user/*");
-
         // ref types
         servletHandler.addServletWithMapping(AccountTypeServletR.class, Util.CONTEXT_PATH + "/accounttypes/*");
         servletHandler.addServletWithMapping(BankServletR.class, Util.CONTEXT_PATH + "/banks/*");
         servletHandler.addServletWithMapping(CategoryServletR.class, Util.CONTEXT_PATH + "/categories/*");
         servletHandler.addServletWithMapping(CategoryTypeServletR.class, Util.CONTEXT_PATH + "/categorytypes/*");
         servletHandler.addServletWithMapping(TransactionTypeServletR.class, Util.CONTEXT_PATH + "/transactiontypes/*");
+
+        // users
+        servletHandler.addServletWithMapping(UserServletCRU.class, Util.CONTEXT_PATH + "/users/user/*");
+
+        // accounts
+        servletHandler.addServletWithMapping(AccountServletCRUD.class, Util.CONTEXT_PATH + "/accounts/*");
+
+        // merchants
+        servletHandler.addServletWithMapping(MerchantServletCRUD.class, Util.CONTEXT_PATH + "/merchants/*");
+
+        // transactions
+        servletHandler.addServletWithMapping(TransactionServletCRUD.class, Util.CONTEXT_PATH + "/transactions/*");
+
+        // reports
+        servletHandler.addServletWithMapping(ReportsServletR.class, Util.CONTEXT_PATH + "/reports/*");
 
         return servletHandler;
     }
