@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.eclipse.jetty:jetty-server:11.0.7'
     implementation 'org.eclipse.jetty:jetty-servlet:11.0.7'
     implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'org.quartz-scheduler:quartz:2.3.2'
 
     implementation('org.slf4j:slf4j-api') {
         version {
@@ -28,26 +29,19 @@ dependencies {
         }
     }
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-
-    // IF USING MONGO
-    // implementation 'org.mongodb:mongodb-driver-sync:4.4.0'
-
-    // FOR TESTING
-    // testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    // testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'nosrping.service.skeleton.App'
+    mainClass = 'pets.service.App'
 }
 
 jar {
-    archiveFileName = 'nospring-service-skeleton.jar'
+    archiveFileName = 'pets-service-simple.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     manifest {
-        attributes "Main-Class": "nospring.service.skeleton.App"
+        attributes "Main-Class": "pets.service.App"
     }
 
     from {
