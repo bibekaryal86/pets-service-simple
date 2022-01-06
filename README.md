@@ -1,5 +1,7 @@
 # pets-service-layer-simple
 
+* Main Repo: https://github.com/bibekaryal86/pets-service-layer
+
 This is a simple app which provides the business logic for Personal Expenses Tracking System application. This app is a scaled down version
 of `pets-service-layer` app found here: https://github.com/bibekaryal86/pets-service-layer. The other app uses Spring
 Boot with RestTemplate framework to do the exact same function as this app - `pets-service-layer-simple`. However,
