@@ -62,7 +62,7 @@ public class ReportsServletR extends HttpServlet {
             response.setStatus(400);
             reportsResponse = ReportsResponse.builder()
                     .reportCashFlows(emptyList())
-                    .reportCategoryTypes(emptyList())
+                    .reportCurrentBalances(emptyList())
                     .reportCategoryTypes(emptyList())
                     .status(Status.builder()
                             .errMsg(errMsg)
