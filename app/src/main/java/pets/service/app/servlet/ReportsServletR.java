@@ -6,10 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import pets.service.app.model.ReportsResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.ReportsService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
-import java.util.Collections;
+
+import static java.util.Collections.emptyList;
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class ReportsServletR extends HttpServlet {
     private String findReportTypeRequest(String requestUri) {
@@ -27,9 +30,9 @@ public class ReportsServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             String reportType = findReportTypeRequest(request.getRequestURI());
 
             if ("currentbalances".equals(reportType)) {
@@ -37,7 +40,7 @@ public class ReportsServletR extends HttpServlet {
             } else {
                 String selectedYear = request.getParameter("selectedyear");
 
-                if (Util.hasText(selectedYear)) {
+                if (hasText(selectedYear)) {
                     if ("cashflows".equals(reportType)) {
                         reportsResponse = new ReportsService().getCashFlowsReport(username, selectedYear);
                     } else if ("categories".equals(reportType)) {
@@ -58,9 +61,9 @@ public class ReportsServletR extends HttpServlet {
         if (errMsg != null) {
             response.setStatus(400);
             reportsResponse = ReportsResponse.builder()
-                    .reportCashFlows(Collections.emptyList())
-                    .reportCategoryTypes(Collections.emptyList())
-                    .reportCategoryTypes(Collections.emptyList())
+                    .reportCashFlows(emptyList())
+                    .reportCategoryTypes(emptyList())
+                    .reportCategoryTypes(emptyList())
                     .status(Status.builder()
                             .errMsg(errMsg)
                             .build())
@@ -73,6 +76,6 @@ public class ReportsServletR extends HttpServlet {
             }
         }
 
-        response.getWriter().print(Util.getGson().toJson(reportsResponse));
+        response.getWriter().print(getGson().toJson(reportsResponse));
     }
 }

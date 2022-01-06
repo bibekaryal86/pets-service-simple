@@ -8,10 +8,15 @@ import pets.service.app.model.RefMerchantRequest;
 import pets.service.app.model.RefMerchantResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.MerchantService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
-import java.util.Collections;
+
+import static java.util.Collections.emptyList;
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestBody;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
+
 
 public class MerchantServletCRUD extends HttpServlet {
     private String getPostRequestType(String requestUri) {
@@ -24,8 +29,8 @@ public class MerchantServletCRUD extends HttpServlet {
 
     private boolean isValidMerchantRequest(RefMerchantRequest refMerchantRequest) {
         return refMerchantRequest != null &&
-                Util.hasText(refMerchantRequest.getUsername()) &&
-                Util.hasText(refMerchantRequest.getDescription());
+                hasText(refMerchantRequest.getUsername()) &&
+                hasText(refMerchantRequest.getDescription());
     }
 
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
@@ -35,17 +40,17 @@ public class MerchantServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             if (isDelete || isUpdate) {
                 String id = request.getParameter("id");
 
-                if (Util.hasText(id)) {
+                if (hasText(id)) {
                     if (isDelete) {
                         refMerchantResponse = new MerchantService().deleteMerchant(username, id);
                     } else {
-                        RefMerchantRequest refMerchantRequest = (RefMerchantRequest) Util.getRequestBody(request, RefMerchantRequest.class);
+                        RefMerchantRequest refMerchantRequest = (RefMerchantRequest) getRequestBody(request, RefMerchantRequest.class);
 
                         if (isValidMerchantRequest(refMerchantRequest)) {
                             refMerchantResponse = new MerchantService().updateMerchant(id, refMerchantRequest);
@@ -57,7 +62,7 @@ public class MerchantServletCRUD extends HttpServlet {
                     errMsg = String.format("Error Processing Request! Invalid Merchant Id: %s", id);
                 }
             } else if (isSave) {
-                RefMerchantRequest refMerchantRequest = (RefMerchantRequest) Util.getRequestBody(request, RefMerchantRequest.class);
+                RefMerchantRequest refMerchantRequest = (RefMerchantRequest) getRequestBody(request, RefMerchantRequest.class);
 
                 if (isValidMerchantRequest(refMerchantRequest)) {
                     refMerchantResponse = new MerchantService().saveNewMerchant(refMerchantRequest);
@@ -76,7 +81,7 @@ public class MerchantServletCRUD extends HttpServlet {
         if (errMsg != null) {
             response.setStatus(400);
             refMerchantResponse = RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg(errMsg)
                             .build())
@@ -89,7 +94,7 @@ public class MerchantServletCRUD extends HttpServlet {
             }
         }
 
-        response.getWriter().print(Util.getGson().toJson(refMerchantResponse));
+        response.getWriter().print(getGson().toJson(refMerchantResponse));
     }
 
 
@@ -118,15 +123,15 @@ public class MerchantServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             String id = request.getParameter("id");
 
-            if (Util.hasText(id)) {
+            if (hasText(id)) {
                 refMerchantResponse = new MerchantService().getMerchantById(id);
             } else {
-                RefMerchantFilters refMerchantFilters = (RefMerchantFilters) Util.getRequestBody(request, RefMerchantFilters.class);
+                RefMerchantFilters refMerchantFilters = (RefMerchantFilters) getRequestBody(request, RefMerchantFilters.class);
                 refMerchantResponse = new MerchantService().getMerchantsByUser(username, refMerchantFilters);
             }
 
@@ -145,6 +150,6 @@ public class MerchantServletCRUD extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(refMerchantResponse));
+        response.getWriter().print(getGson().toJson(refMerchantResponse));
     }
 }

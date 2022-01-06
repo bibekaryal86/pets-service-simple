@@ -8,10 +8,14 @@ import pets.service.app.model.AccountRequest;
 import pets.service.app.model.AccountResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.AccountService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
 import java.util.Collections;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestBody;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class AccountServletCRUD extends HttpServlet {
     private String getPostRequestType(String requestUri) {
@@ -24,11 +28,11 @@ public class AccountServletCRUD extends HttpServlet {
 
     private boolean isValidAccountRequest(AccountRequest accountRequest) {
         return accountRequest != null &&
-                Util.hasText(accountRequest.getUsername()) &&
-                Util.hasText(accountRequest.getDescription()) &&
-                Util.hasText(accountRequest.getTypeId()) &&
-                Util.hasText(accountRequest.getBankId()) &&
-                Util.hasText(accountRequest.getStatus());
+                hasText(accountRequest.getUsername()) &&
+                hasText(accountRequest.getDescription()) &&
+                hasText(accountRequest.getTypeId()) &&
+                hasText(accountRequest.getBankId()) &&
+                hasText(accountRequest.getStatus());
     }
 
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
@@ -38,17 +42,17 @@ public class AccountServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             if (isDelete || isUpdate) {
                 String id = request.getParameter("id");
 
-                if (Util.hasText(id)) {
+                if (hasText(id)) {
                     if (isDelete) {
                         accountResponse = new AccountService().deleteAccount(username, id);
                     } else {
-                        AccountRequest accountRequest = (AccountRequest) Util.getRequestBody(request, AccountRequest.class);
+                        AccountRequest accountRequest = (AccountRequest) getRequestBody(request, AccountRequest.class);
 
                         if (isValidAccountRequest(accountRequest)) {
                             accountResponse = new AccountService().updateAccount(username, id, accountRequest, true);
@@ -60,7 +64,7 @@ public class AccountServletCRUD extends HttpServlet {
                     errMsg = String.format("Error Processing Request! Invalid Account Id: %s", id);
                 }
             } else if (isSave) {
-                AccountRequest accountRequest = (AccountRequest) Util.getRequestBody(request, AccountRequest.class);
+                AccountRequest accountRequest = (AccountRequest) getRequestBody(request, AccountRequest.class);
 
                 if (isValidAccountRequest(accountRequest)) {
                     accountResponse = new AccountService().saveNewAccount(username, accountRequest, true);
@@ -92,7 +96,7 @@ public class AccountServletCRUD extends HttpServlet {
             }
         }
 
-        response.getWriter().print(Util.getGson().toJson(accountResponse));
+        response.getWriter().print(getGson().toJson(accountResponse));
     }
 
 
@@ -122,15 +126,15 @@ public class AccountServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             String id = request.getParameter("id");
 
-            if (Util.hasText(id)) {
+            if (hasText(id)) {
                 accountResponse = new AccountService().getAccountById(username, id, true);
             } else {
-                AccountFilters accountFilters = (AccountFilters) Util.getRequestBody(request, AccountFilters.class);
+                AccountFilters accountFilters = (AccountFilters) getRequestBody(request, AccountFilters.class);
                 accountResponse = new AccountService().getAccountsByUser(username, accountFilters, true);
             }
 
@@ -149,6 +153,6 @@ public class AccountServletCRUD extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(accountResponse));
+        response.getWriter().print(getGson().toJson(accountResponse));
     }
 }

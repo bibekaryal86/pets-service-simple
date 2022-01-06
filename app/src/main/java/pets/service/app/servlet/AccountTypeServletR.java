@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import pets.service.app.model.RefAccountTypeResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.RefTypesService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class AccountTypeServletR extends HttpServlet {
     @Override
@@ -17,9 +20,9 @@ public class AccountTypeServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             refAccountTypeResponse = new RefTypesService().getAllAccountTypes();
 
             if (refAccountTypeResponse.getStatus() == null) {
@@ -37,6 +40,6 @@ public class AccountTypeServletR extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(refAccountTypeResponse));
+        response.getWriter().print(getGson().toJson(refAccountTypeResponse));
     }
 }

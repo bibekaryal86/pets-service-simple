@@ -6,7 +6,7 @@ import pets.service.app.model.Status;
 import pets.service.app.model.UserRequest;
 import pets.service.app.model.UserResponse;
 
-import java.util.Collections;
+import static java.util.Collections.emptyList;
 
 @Slf4j
 public class UserService {
@@ -17,7 +17,7 @@ public class UserService {
         } catch (Exception ex) {
             log.error("Exception in Get User by Username: {}", username);
             return UserResponse.builder()
-                    .users(Collections.emptyList())
+                    .users(emptyList())
                     .status(Status.builder()
                             .errMsg("User Unavailable! Please Try Again!!!")
                             .build())
@@ -31,7 +31,7 @@ public class UserService {
         } catch (Exception ex) {
             log.error("Exception in Save New User: {}", userRequest);
             return UserResponse.builder()
-                    .users(Collections.emptyList())
+                    .users(emptyList())
                     .status(Status.builder()
                             .errMsg("Save User Unavailable! Please Try Again!!!")
                             .build())
@@ -45,7 +45,7 @@ public class UserService {
         } catch (Exception ex) {
             log.error("Exception in Update New User: {} | {}", id, userRequest);
             return UserResponse.builder()
-                    .users(Collections.emptyList())
+                    .users(emptyList())
                     .status(Status.builder()
                             .errMsg("Update User Unavailable! Please Try Again!!!")
                             .build())

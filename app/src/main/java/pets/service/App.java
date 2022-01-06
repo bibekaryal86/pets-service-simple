@@ -9,8 +9,8 @@ import pets.service.app.server.ServerJetty;
 @Slf4j
 public class App {
     public static void main(String[] args) throws Exception {
-        log.info("Begin pets-service initialization...");
+        log.info("Begin pets-service-layer-simple initialization...");
         new ServerJetty().start();
-        log.info("End pets-service initialization...");
+        log.info("End pets-service-layer-simple initialization...");
     }
 }

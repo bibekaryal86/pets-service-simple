@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import pets.service.app.model.RefTransactionTypeResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.RefTypesService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class TransactionTypeServletR extends HttpServlet {
     @Override
@@ -17,9 +20,9 @@ public class TransactionTypeServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             refTransactionTypeResponse = new RefTypesService().getAllTransactionTypes();
 
             if (refTransactionTypeResponse.getStatus() == null) {
@@ -37,6 +40,6 @@ public class TransactionTypeServletR extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(refTransactionTypeResponse));
+        response.getWriter().print(getGson().toJson(refTransactionTypeResponse));
     }
 }

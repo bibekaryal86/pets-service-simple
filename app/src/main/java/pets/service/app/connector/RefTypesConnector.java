@@ -1,7 +1,11 @@
 package pets.service.app.connector;
 
 import org.eclipse.jetty.http.HttpMethod;
-import pets.service.app.model.*;
+import pets.service.app.model.RefAccountTypeResponse;
+import pets.service.app.model.RefBankResponse;
+import pets.service.app.model.RefCategoryResponse;
+import pets.service.app.model.RefCategoryTypeResponse;
+import pets.service.app.model.RefTransactionTypeResponse;
 import pets.service.app.util.ConnectorUtil;
 import pets.service.app.util.EndpointUtil;
 import pets.service.app.util.Util;

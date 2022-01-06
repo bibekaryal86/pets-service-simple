@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import pets.service.app.model.RefCategoryTypeResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.RefTypesService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class CategoryTypeServletR extends HttpServlet {
     @Override
@@ -17,10 +20,10 @@ public class CategoryTypeServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
         boolean usedInTxnsOnly = Boolean.parseBoolean(request.getParameter("usedInTxnsOnly"));
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             refCategoryTypeResponse = new RefTypesService().getAllCategoryTypes(username, usedInTxnsOnly);
 
             if (refCategoryTypeResponse.getStatus() == null) {
@@ -38,6 +41,6 @@ public class CategoryTypeServletR extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(refCategoryTypeResponse));
+        response.getWriter().print(getGson().toJson(refCategoryTypeResponse));
     }
 }

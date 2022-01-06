@@ -7,20 +7,24 @@ import pets.service.app.model.Status;
 import pets.service.app.model.UserRequest;
 import pets.service.app.model.UserResponse;
 import pets.service.app.service.UserService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestBody;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class UserServletCRU extends HttpServlet {
     private boolean isValidUserRequest(UserRequest userRequest) {
         return userRequest != null &&
-                Util.hasText(userRequest.getUsername()) &&
-                Util.hasText(userRequest.getPassword()) &&
-                Util.hasText(userRequest.getFirstName()) &&
-                Util.hasText(userRequest.getLastName()) &&
-                Util.hasText(userRequest.getEmail()) &&
-                Util.hasText(userRequest.getPhone()) &&
-                Util.hasText(userRequest.getStatus());
+                hasText(userRequest.getUsername()) &&
+                hasText(userRequest.getPassword()) &&
+                hasText(userRequest.getFirstName()) &&
+                hasText(userRequest.getLastName()) &&
+                hasText(userRequest.getEmail()) &&
+                hasText(userRequest.getPhone()) &&
+                hasText(userRequest.getStatus());
     }
 
     @Override
@@ -29,7 +33,7 @@ public class UserServletCRU extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        UserRequest userRequest = (UserRequest) Util.getRequestBody(request, UserRequest.class);
+        UserRequest userRequest = (UserRequest) getRequestBody(request, UserRequest.class);
 
         if (isValidUserRequest(userRequest)) {
             userResponse = new UserService().saveNewUser(userRequest);
@@ -48,7 +52,7 @@ public class UserServletCRU extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(userResponse));
+        response.getWriter().print(getGson().toJson(userResponse));
     }
 
     @Override
@@ -57,9 +61,9 @@ public class UserServletCRU extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 6, 5);
+        String username = getRequestPathParameter(request, 6, 5);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             userResponse = new UserService().getUserByUsername(username);
 
             if (userResponse.getStatus() == null) {
@@ -77,7 +81,7 @@ public class UserServletCRU extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(userResponse));
+        response.getWriter().print(getGson().toJson(userResponse));
     }
 
     @Override
@@ -86,11 +90,11 @@ public class UserServletCRU extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 6, 4);
-        UserRequest userRequest = (UserRequest) Util.getRequestBody(request, UserRequest.class);
+        String username = getRequestPathParameter(request, 6, 4);
+        UserRequest userRequest = (UserRequest) getRequestBody(request, UserRequest.class);
         String id = request.getParameter("id");
 
-        if (Util.hasText(username) && Util.hasText(id) && isValidUserRequest(userRequest)) {
+        if (hasText(username) && hasText(id) && isValidUserRequest(userRequest)) {
             userResponse = new UserService().updateUser(username, userRequest);
 
             if (userResponse.getStatus() == null) {
@@ -107,6 +111,6 @@ public class UserServletCRU extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(userResponse));
+        response.getWriter().print(getGson().toJson(userResponse));
     }
 }

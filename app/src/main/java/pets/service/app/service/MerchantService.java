@@ -2,11 +2,20 @@ package pets.service.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.MerchantConnector;
-import pets.service.app.model.*;
-import pets.service.app.util.MerchantHelper;
+import pets.service.app.model.RefMerchantFilters;
+import pets.service.app.model.RefMerchantRequest;
+import pets.service.app.model.RefMerchantResponse;
+import pets.service.app.model.Status;
+import pets.service.app.model.Transaction;
+import pets.service.app.model.TransactionResponse;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Collections.emptyList;
+import static pets.service.app.util.MerchantHelper.applyFilters;
+import static pets.service.app.util.MerchantHelper.getRefMerchantsFilterListByName;
+import static pets.service.app.util.MerchantHelper.getRefMerchantsNotUsedInTransactions;
+import static pets.service.app.util.MerchantHelper.setSystemDependentMerchants;
 
 @Slf4j
 public class MerchantService {
@@ -17,7 +26,7 @@ public class MerchantService {
         } catch (Exception ex) {
             log.error("Exception in Get Merchant by Id: {}", id);
             return RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg("Merchant Unavailable! Please Try Again!!!")
                             .build())
@@ -37,7 +46,7 @@ public class MerchantService {
         } catch (Exception ex) {
             log.error("Exception in Get Merchant by Username: {}", username);
             refMerchantResponse = RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg("Merchant Unavailable! Please Try Again!!!")
                             .build())
@@ -45,16 +54,16 @@ public class MerchantService {
         }
 
         if (!refMerchantResponse.getRefMerchants().isEmpty()) {
-            MerchantHelper.setSystemDependentMerchants(refMerchantResponse);
-            refMerchantResponse.setRefMerchantsFilterList(MerchantHelper.getRefMerchantsFilterListByName(refMerchantResponse));
+            setSystemDependentMerchants(refMerchantResponse);
+            refMerchantResponse.setRefMerchantsFilterList(getRefMerchantsFilterListByName(refMerchantResponse));
 
             TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, null, false);
             refMerchantResponse.setRefMerchantsNotUsedInTransactions(
-                    MerchantHelper.getRefMerchantsNotUsedInTransactions(refMerchantResponse.getRefMerchants(),
+                    getRefMerchantsNotUsedInTransactions(refMerchantResponse.getRefMerchants(),
                             transactionResponse.getTransactions()));
 
             if (refMerchantFilters != null) {
-                refMerchantResponse = MerchantHelper.applyFilters(refMerchantResponse, refMerchantFilters,
+                refMerchantResponse = applyFilters(refMerchantResponse, refMerchantFilters,
                         transactionResponse.getTransactions());
             }
         }
@@ -68,7 +77,7 @@ public class MerchantService {
         } catch (Exception ex) {
             log.error("Exception in Save New Merchant: {}", refMerchantRequest);
             return RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg("Save Merchant Unavailable! Please Try Again!!!")
                             .build())
@@ -92,7 +101,7 @@ public class MerchantService {
                 } catch (Exception ex) {
                     log.error("Exception in Delete Merchant: {}", id, ex);
                     refMerchantResponse = RefMerchantResponse.builder()
-                            .refMerchants(Collections.emptyList())
+                            .refMerchants(emptyList())
                             .status(Status.builder()
                                     .errMsg("Delete Merchant Unavailable! Please Try Again!!!")
                                     .build())
@@ -101,7 +110,7 @@ public class MerchantService {
             } else {
                 log.error("Delete Merchant Error, Merchant Used In Transactions: {} | {}", username, id);
                 refMerchantResponse = RefMerchantResponse.builder()
-                        .refMerchants(Collections.emptyList())
+                        .refMerchants(emptyList())
                         .status(Status.builder()
                                 .errMsg("Delete Merchant Unavailable! Merchant Used in Transactions!! Please Try Again!!!")
                                 .build())
@@ -110,7 +119,7 @@ public class MerchantService {
         } else {
             log.error("Delete Merchant Error, Empty Transactions List: {} | {}", username, id);
             refMerchantResponse = RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg("Delete Merchant Unavailable! Error Retrieving Transactions!! Please Try Again!!!")
                             .build())
@@ -126,7 +135,7 @@ public class MerchantService {
         } catch (Exception ex) {
             log.error("Exception in Update Merchant: {} | {}", id, merchantRequest, ex);
             return RefMerchantResponse.builder()
-                    .refMerchants(Collections.emptyList())
+                    .refMerchants(emptyList())
                     .status(Status.builder()
                             .errMsg("Update Merchant Unavailable! Please Try Again!!!")
                             .build())

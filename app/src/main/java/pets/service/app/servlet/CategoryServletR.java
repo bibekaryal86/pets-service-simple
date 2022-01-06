@@ -7,9 +7,13 @@ import pets.service.app.model.RefCategoryFilters;
 import pets.service.app.model.RefCategoryResponse;
 import pets.service.app.model.Status;
 import pets.service.app.service.RefTypesService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
+
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestBody;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
 
 public class CategoryServletR extends HttpServlet {
     @Override
@@ -18,10 +22,10 @@ public class CategoryServletR extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
-        RefCategoryFilters refCategoryFilters = (RefCategoryFilters) Util.getRequestBody(request, RefCategoryFilters.class);
+        String username = getRequestPathParameter(request, 5, 3);
+        RefCategoryFilters refCategoryFilters = (RefCategoryFilters) getRequestBody(request, RefCategoryFilters.class);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             refCategoryResponse = new RefTypesService().getAllCategories(username, refCategoryFilters);
 
             if (refCategoryResponse.getStatus() == null) {
@@ -39,6 +43,6 @@ public class CategoryServletR extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(refCategoryResponse));
+        response.getWriter().print(getGson().toJson(refCategoryResponse));
     }
 }

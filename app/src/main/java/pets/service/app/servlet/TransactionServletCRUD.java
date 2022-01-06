@@ -8,10 +8,15 @@ import pets.service.app.model.TransactionFilters;
 import pets.service.app.model.TransactionRequest;
 import pets.service.app.model.TransactionResponse;
 import pets.service.app.service.TransactionService;
-import pets.service.app.util.Util;
 
 import java.io.IOException;
-import java.util.Collections;
+
+import static java.util.Collections.emptyList;
+import static pets.service.app.util.Util.getGson;
+import static pets.service.app.util.Util.getRequestBody;
+import static pets.service.app.util.Util.getRequestPathParameter;
+import static pets.service.app.util.Util.hasText;
+
 
 public class TransactionServletCRUD extends HttpServlet {
     private String getPostRequestType(String requestUri) {
@@ -24,13 +29,13 @@ public class TransactionServletCRUD extends HttpServlet {
 
     private boolean isValidTransactionRequest(TransactionRequest transactionRequest) {
         return transactionRequest != null &&
-                Util.hasText(transactionRequest.getAccountId()) &&
-                Util.hasText(transactionRequest.getTypeId()) &&
-                Util.hasText(transactionRequest.getCategoryId()) &&
-                (Util.hasText(transactionRequest.getMerchantId()) ||
-                        Util.hasText(transactionRequest.getNewMerchant())) &&
-                Util.hasText(transactionRequest.getUsername()) &&
-                Util.hasText(transactionRequest.getDate());
+                hasText(transactionRequest.getAccountId()) &&
+                hasText(transactionRequest.getTypeId()) &&
+                hasText(transactionRequest.getCategoryId()) &&
+                (hasText(transactionRequest.getMerchantId()) ||
+                        hasText(transactionRequest.getNewMerchant())) &&
+                hasText(transactionRequest.getUsername()) &&
+                hasText(transactionRequest.getDate());
     }
 
     protected void doPostPutDelete(HttpServletRequest request, HttpServletResponse response,
@@ -40,17 +45,17 @@ public class TransactionServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             if (isDelete || isUpdate) {
                 String id = request.getParameter("id");
 
-                if (Util.hasText(id)) {
+                if (hasText(id)) {
                     if (isDelete) {
                         transactionResponse = new TransactionService().deleteTransaction(id);
                     } else {
-                        TransactionRequest transactionRequest = (TransactionRequest) Util.getRequestBody(request, TransactionRequest.class);
+                        TransactionRequest transactionRequest = (TransactionRequest) getRequestBody(request, TransactionRequest.class);
 
                         if (isValidTransactionRequest(transactionRequest)) {
                             transactionResponse = new TransactionService().updateTransaction(username, id, transactionRequest, true);
@@ -62,7 +67,7 @@ public class TransactionServletCRUD extends HttpServlet {
                     errMsg = String.format("Error Processing Request! Invalid Transaction Id: %s", id);
                 }
             } else if (isSave) {
-                TransactionRequest transactionRequest = (TransactionRequest) Util.getRequestBody(request, TransactionRequest.class);
+                TransactionRequest transactionRequest = (TransactionRequest) getRequestBody(request, TransactionRequest.class);
 
                 if (isValidTransactionRequest(transactionRequest)) {
                     transactionResponse = new TransactionService().saveNewTransaction(username, transactionRequest, true);
@@ -81,7 +86,7 @@ public class TransactionServletCRUD extends HttpServlet {
         if (errMsg != null) {
             response.setStatus(400);
             transactionResponse = TransactionResponse.builder()
-                    .transactions(Collections.emptyList())
+                    .transactions(emptyList())
                     .status(Status.builder()
                             .errMsg(errMsg)
                             .build())
@@ -94,7 +99,7 @@ public class TransactionServletCRUD extends HttpServlet {
             }
         }
 
-        response.getWriter().print(Util.getGson().toJson(transactionResponse));
+        response.getWriter().print(getGson().toJson(transactionResponse));
     }
 
 
@@ -123,15 +128,15 @@ public class TransactionServletCRUD extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
 
-        String username = Util.getRequestPathParameter(request, 5, 3);
+        String username = getRequestPathParameter(request, 5, 3);
 
-        if (Util.hasText(username)) {
+        if (hasText(username)) {
             String id = request.getParameter("id");
 
-            if (Util.hasText(id)) {
+            if (hasText(id)) {
                 transactionResponse = new TransactionService().getTransactionById(username, id, true);
             } else {
-                TransactionFilters transactionFilters = (TransactionFilters) Util.getRequestBody(request, TransactionFilters.class);
+                TransactionFilters transactionFilters = (TransactionFilters) getRequestBody(request, TransactionFilters.class);
                 transactionResponse = new TransactionService().getTransactionsByUser(username, transactionFilters, true);
             }
 
@@ -150,6 +155,6 @@ public class TransactionServletCRUD extends HttpServlet {
                     .build();
         }
 
-        response.getWriter().print(Util.getGson().toJson(transactionResponse));
+        response.getWriter().print(getGson().toJson(transactionResponse));
     }
 }

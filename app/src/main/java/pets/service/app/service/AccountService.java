@@ -2,11 +2,20 @@ package pets.service.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import pets.service.app.connector.AccountConnector;
-import pets.service.app.model.*;
-import pets.service.app.util.AccountHelper;
+import pets.service.app.model.AccountFilters;
+import pets.service.app.model.AccountRequest;
+import pets.service.app.model.AccountResponse;
+import pets.service.app.model.RefAccountTypeResponse;
+import pets.service.app.model.RefBankResponse;
+import pets.service.app.model.Status;
+import pets.service.app.model.TransactionResponse;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Collections.emptyList;
+import static pets.service.app.util.AccountHelper.applyAllDetailsStatic;
+import static pets.service.app.util.AccountHelper.applyFilters;
+import static pets.service.app.util.AccountHelper.calculateCurrentBalanceStatic;
 
 @Slf4j
 public class AccountService {
@@ -19,7 +28,7 @@ public class AccountService {
         } catch (Exception ex) {
             log.error("Exception in Get Account by Id: {}", id);
             accountResponse = AccountResponse.builder()
-                    .accounts(Collections.emptyList())
+                    .accounts(emptyList())
                     .status(Status.builder()
                             .errMsg("Account Unavailable! Please Try Again!!!")
                             .build())
@@ -49,7 +58,7 @@ public class AccountService {
         } catch (Exception ex) {
             log.error("Exception in Get Accounts By User: {} | {} | {}", username, accountFilters, applyAllDetails);
             accountResponse = AccountResponse.builder()
-                    .accounts(Collections.emptyList())
+                    .accounts(emptyList())
                     .status(Status.builder()
                             .errMsg("Accounts Unavailable! Please Try Again!!!")
                             .build())
@@ -58,7 +67,7 @@ public class AccountService {
 
         if (!accountResponse.getAccounts().isEmpty()) {
             if (accountFilters != null) {
-                accountResponse = AccountHelper.applyFilters(accountResponse, accountFilters);
+                accountResponse = applyFilters(accountResponse, accountFilters);
             }
 
             if (applyAllDetails) {
@@ -81,7 +90,7 @@ public class AccountService {
         } catch (Exception ex) {
             log.error("Exception in Save New Account: {} | {} | {}", username, accountRequest, applyAllDetails);
             accountResponse = AccountResponse.builder()
-                    .accounts(Collections.emptyList())
+                    .accounts(emptyList())
                     .status(Status.builder()
                             .errMsg("Save Account Unavailable! Please Try Again!!!")
                             .build())
@@ -108,7 +117,7 @@ public class AccountService {
         } catch (Exception ex) {
             log.error("Exception in Update Account: {} | {} | {} | {}", username, id, accountRequest, applyAllDetails);
             accountResponse = AccountResponse.builder()
-                    .accounts(Collections.emptyList())
+                    .accounts(emptyList())
                     .status(Status.builder()
                             .errMsg("Update Account Unavailable! Please Try Again!!!")
                             .build())
@@ -137,7 +146,7 @@ public class AccountService {
 
                 if (transactionResponse.getStatus() != null) {
                     accountResponse = AccountResponse.builder()
-                            .accounts(Collections.emptyList())
+                            .accounts(emptyList())
                             .status(Status.builder()
                                     .errMsg("Account Deleted! But Error Deleting Related Transactions!! Please Try Again!!!")
                                     .build())
@@ -147,7 +156,7 @@ public class AccountService {
         } catch (Exception ex) {
             log.error("Exception in Delete Account: {} | {}", username, id);
             accountResponse = AccountResponse.builder()
-                    .accounts(Collections.emptyList())
+                    .accounts(emptyList())
                     .status(Status.builder()
                             .errMsg("Delete Account Unavailable! Please Try Again!!!")
                             .build())
@@ -160,12 +169,12 @@ public class AccountService {
     private void applyAllDetails(AccountResponse accountResponse) {
         RefAccountTypeResponse refAccountTypeResponse = new RefTypesService().getAllAccountTypes();
         RefBankResponse refBankResponse = new RefTypesService().getAllBanks();
-        AccountHelper.applyAllDetailsStatic(accountResponse, refAccountTypeResponse.getRefAccountTypes(),
+        applyAllDetailsStatic(accountResponse, refAccountTypeResponse.getRefAccountTypes(),
                 refBankResponse.getRefBanks());
     }
 
     private void calculateCurrentBalance(String username, AccountResponse accountResponse) {
         TransactionResponse transactionResponse = new TransactionService().getTransactionsByUser(username, null, false);
-        AccountHelper.calculateCurrentBalanceStatic(accountResponse, transactionResponse.getTransactions());
+        calculateCurrentBalanceStatic(accountResponse, transactionResponse.getTransactions());
     }
 }

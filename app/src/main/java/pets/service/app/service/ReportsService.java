@@ -1,8 +1,19 @@
 package pets.service.app.service;
 
 import lombok.NonNull;
-import pets.service.app.model.*;
-import pets.service.app.util.Util;
+import pets.service.app.model.Account;
+import pets.service.app.model.AccountResponse;
+import pets.service.app.model.RefCategory;
+import pets.service.app.model.RefCategoryType;
+import pets.service.app.model.ReportCashFlows;
+import pets.service.app.model.ReportCategories;
+import pets.service.app.model.ReportCategoryTypes;
+import pets.service.app.model.ReportCurrentBalances;
+import pets.service.app.model.ReportsResponse;
+import pets.service.app.model.Status;
+import pets.service.app.model.Transaction;
+import pets.service.app.model.TransactionFilters;
+import pets.service.app.model.TransactionResponse;
 
 import java.math.BigDecimal;
 import java.time.Month;
@@ -16,6 +27,19 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_CASH;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_CHECKING;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_CREDIT_CARD;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_INVESTMENT;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_LOANS_MORTGAGES;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_OTHER_DEPOSITS;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_OTHER_LOANS;
+import static pets.service.app.util.Util.ACCOUNT_TYPE_ID_SAVINGS;
+import static pets.service.app.util.Util.CATEGORY_ID_LOAN_PAYMENTS;
+import static pets.service.app.util.Util.CATEGORY_ID_REFUNDS;
+import static pets.service.app.util.Util.TRANSACTION_TYPE_ID_EXPENSE;
+import static pets.service.app.util.Util.TRANSACTION_TYPE_ID_INCOME;
+import static pets.service.app.util.Util.TRANSACTION_TYPE_ID_TRANSFER;
 
 public class ReportsService {
 
@@ -39,35 +63,35 @@ public class ReportsService {
 
     private List<ReportCurrentBalances> calculateCurrentBalances(@NonNull List<Account> accounts) {
         BigDecimal totalCash = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_CASH))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_CASH))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalCheckingAccounts = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_CHECKING))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_CHECKING))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalSavingsAccounts = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_SAVINGS))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_SAVINGS))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalInvestmentAccounts = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_INVESTMENT))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_INVESTMENT))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalOtherDepositAccounts = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_OTHER_DEPOSITS))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_OTHER_DEPOSITS))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalCreditCards = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_CREDIT_CARD))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_CREDIT_CARD))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalLoansAndMortgages = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_LOANS_MORTGAGES))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_LOANS_MORTGAGES))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalOtherLoanAccounts = accounts.stream()
-                .filter(account -> account.getRefAccountType().getId().equals(Util.ACCOUNT_TYPE_ID_OTHER_LOANS))
+                .filter(account -> account.getRefAccountType().getId().equals(ACCOUNT_TYPE_ID_OTHER_LOANS))
                 .map(Account::getCurrentBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalAssets = totalCash.add(totalCheckingAccounts)
@@ -81,21 +105,21 @@ public class ReportsService {
 
         return asList(ReportCurrentBalances.builder()
                         .totalCash(totalCash)
-                        .accountTypeCashId(Util.ACCOUNT_TYPE_ID_CASH)
+                        .accountTypeCashId(ACCOUNT_TYPE_ID_CASH)
                         .totalCheckingAccounts(totalCheckingAccounts)
-                        .accountTypeCheckingAccountsId(Util.ACCOUNT_TYPE_ID_CHECKING)
+                        .accountTypeCheckingAccountsId(ACCOUNT_TYPE_ID_CHECKING)
                         .totalSavingsAccounts(totalSavingsAccounts)
-                        .accountTypeSavingsAccountsId(Util.ACCOUNT_TYPE_ID_SAVINGS)
+                        .accountTypeSavingsAccountsId(ACCOUNT_TYPE_ID_SAVINGS)
                         .totalInvestmentAccounts(totalInvestmentAccounts)
-                        .accountTypeInvestmentAccountsId(Util.ACCOUNT_TYPE_ID_INVESTMENT)
+                        .accountTypeInvestmentAccountsId(ACCOUNT_TYPE_ID_INVESTMENT)
                         .totalOtherDepositAccounts(totalOtherDepositAccounts)
-                        .accountTypeOtherDepositAccountsId(Util.ACCOUNT_TYPE_ID_OTHER_DEPOSITS)
+                        .accountTypeOtherDepositAccountsId(ACCOUNT_TYPE_ID_OTHER_DEPOSITS)
                         .totalCreditCards(totalCreditCards)
-                        .accountTypeCreditCardsId(Util.ACCOUNT_TYPE_ID_CREDIT_CARD)
+                        .accountTypeCreditCardsId(ACCOUNT_TYPE_ID_CREDIT_CARD)
                         .totalLoansAndMortgages(totalLoansAndMortgages)
-                        .accountTypeLoansAndMortgagesId(Util.ACCOUNT_TYPE_ID_LOANS_MORTGAGES)
+                        .accountTypeLoansAndMortgagesId(ACCOUNT_TYPE_ID_LOANS_MORTGAGES)
                         .totalOtherLoanAccounts(totalOtherLoanAccounts)
-                        .accountTypeOtherLoanAccountsId(Util.ACCOUNT_TYPE_ID_OTHER_LOANS)
+                        .accountTypeOtherLoanAccountsId(ACCOUNT_TYPE_ID_OTHER_LOANS)
                         .build(),
                 ReportCurrentBalances.builder()
                         .totalAssets(totalAssets)
@@ -145,14 +169,14 @@ public class ReportsService {
 
     private ReportCashFlows calculateCashFlow(List<Transaction> monthlyTransactions, Month month, int selectedYear) {
         BigDecimal totalIncomes = monthlyTransactions.stream()
-                .filter(transaction -> transaction.getRefTransactionType().getId().equals(Util.TRANSACTION_TYPE_ID_INCOME)
-                        && !transaction.getRefCategory().getId().equals(Util.CATEGORY_ID_REFUNDS))
+                .filter(transaction -> transaction.getRefTransactionType().getId().equals(TRANSACTION_TYPE_ID_INCOME)
+                        && !transaction.getRefCategory().getId().equals(CATEGORY_ID_REFUNDS))
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalExpenses = monthlyTransactions.stream()
-                .filter(transaction -> transaction.getRefTransactionType().getId().equals(Util.TRANSACTION_TYPE_ID_EXPENSE)
-                        || (transaction.getRefTransactionType().getId().equals(Util.TRANSACTION_TYPE_ID_TRANSFER)
-                        && Util.CATEGORY_ID_LOAN_PAYMENTS.contains(transaction.getRefCategory().getId())))
+                .filter(transaction -> transaction.getRefTransactionType().getId().equals(TRANSACTION_TYPE_ID_EXPENSE)
+                        || (transaction.getRefTransactionType().getId().equals(TRANSACTION_TYPE_ID_TRANSFER)
+                        && CATEGORY_ID_LOAN_PAYMENTS.contains(transaction.getRefCategory().getId())))
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal netSavings = totalIncomes.subtract(totalExpenses);
@@ -197,7 +221,7 @@ public class ReportsService {
         List<ReportCategoryTypes> reportCategoryTypes = new ArrayList<>();
 
         Set<RefCategoryType> refCategoryTypes = transactions.stream()
-                .filter(transaction -> !transaction.getRefTransactionType().getId().equals(Util.TRANSACTION_TYPE_ID_TRANSFER))
+                .filter(transaction -> !transaction.getRefTransactionType().getId().equals(TRANSACTION_TYPE_ID_TRANSFER))
                 .map(transaction -> transaction.getRefCategory().getRefCategoryType())
                 .collect(toSet());
 
