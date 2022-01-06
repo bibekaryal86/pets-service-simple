@@ -4,6 +4,7 @@
 package pets.service;
 
 import lombok.extern.slf4j.Slf4j;
+import pets.service.app.scheduler.SchedulerQuartz;
 import pets.service.app.server.ServerJetty;
 
 @Slf4j
@@ -11,6 +12,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         log.info("Begin pets-service-simple initialization...");
         new ServerJetty().start();
+        new SchedulerQuartz().start();
         log.info("End pets-service-simple initialization...");
     }
 }

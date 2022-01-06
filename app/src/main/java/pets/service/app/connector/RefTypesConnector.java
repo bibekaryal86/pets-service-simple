@@ -6,12 +6,13 @@ import pets.service.app.model.RefBankResponse;
 import pets.service.app.model.RefCategoryResponse;
 import pets.service.app.model.RefCategoryTypeResponse;
 import pets.service.app.model.RefTransactionTypeResponse;
-import pets.service.app.util.ConnectorUtil;
-import pets.service.app.util.EndpointUtil;
-import pets.service.app.util.Util;
 
 import java.util.Map;
 import java.util.Objects;
+
+import static pets.service.app.util.ConnectorUtil.sendHttpRequest;
+import static pets.service.app.util.EndpointUtil.endpointMap;
+import static pets.service.app.util.Util.getPetsDatabaseAuthHeaders;
 
 public class RefTypesConnector {
 
@@ -50,41 +51,41 @@ public class RefTypesConnector {
     }
 
     private RefAccountTypeResponse getAllAccountTypesHttp() {
-        Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
-        String endpoint = EndpointUtil.endpointMap().get("getAllAccountTypesUrl");
-        refAccountTypeResponse = (RefAccountTypeResponse) ConnectorUtil.sendHttpRequest(
+        Map<String, String> headers = getPetsDatabaseAuthHeaders();
+        String endpoint = endpointMap().get("getAllAccountTypesUrl");
+        refAccountTypeResponse = (RefAccountTypeResponse) sendHttpRequest(
                 endpoint, HttpMethod.GET, null, headers, RefAccountTypeResponse.class);
         return refAccountTypeResponse;
     }
 
     private RefBankResponse getAllBanksHttp() {
-        Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
-        String endpoint = EndpointUtil.endpointMap().get("getAllBanksUrl");
-        refBankResponse = (RefBankResponse) ConnectorUtil.sendHttpRequest(
+        Map<String, String> headers = getPetsDatabaseAuthHeaders();
+        String endpoint = endpointMap().get("getAllBanksUrl");
+        refBankResponse = (RefBankResponse) sendHttpRequest(
                 endpoint, HttpMethod.GET, null, headers, RefBankResponse.class);
         return refBankResponse;
     }
 
     private RefCategoryResponse getAllCategoriesHttp() {
-        Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
-        String endpoint = EndpointUtil.endpointMap().get("getAllCategoriesUrl");
-        refCategoryResponse = (RefCategoryResponse) ConnectorUtil.sendHttpRequest(
+        Map<String, String> headers = getPetsDatabaseAuthHeaders();
+        String endpoint = endpointMap().get("getAllCategoriesUrl");
+        refCategoryResponse = (RefCategoryResponse) sendHttpRequest(
                 endpoint, HttpMethod.GET, null, headers, RefCategoryResponse.class);
         return refCategoryResponse;
     }
 
     private RefCategoryTypeResponse getAllCategoryTypesHttp() {
-        Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
-        String endpoint = EndpointUtil.endpointMap().get("getAllCategoryTypesUrl");
-        refCategoryTypeResponse = (RefCategoryTypeResponse) ConnectorUtil.sendHttpRequest(
+        Map<String, String> headers = getPetsDatabaseAuthHeaders();
+        String endpoint = endpointMap().get("getAllCategoryTypesUrl");
+        refCategoryTypeResponse = (RefCategoryTypeResponse) sendHttpRequest(
                 endpoint, HttpMethod.GET, null, headers, RefCategoryTypeResponse.class);
         return refCategoryTypeResponse;
     }
 
     private RefTransactionTypeResponse getAllTransactionTypesHttp() {
-        Map<String, String> headers = Util.getPetsDatabaseAuthHeaders();
-        String endpoint = EndpointUtil.endpointMap().get("getAllTransactionTypesUrl");
-        refTransactionTypeResponse = (RefTransactionTypeResponse) ConnectorUtil.sendHttpRequest(
+        Map<String, String> headers = getPetsDatabaseAuthHeaders();
+        String endpoint = endpointMap().get("getAllTransactionTypesUrl");
+        refTransactionTypeResponse = (RefTransactionTypeResponse) sendHttpRequest(
                 endpoint, HttpMethod.GET, null, headers, RefTransactionTypeResponse.class);
         return refTransactionTypeResponse;
     }

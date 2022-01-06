@@ -69,7 +69,7 @@ public class Util {
     }
 
     public static LocalDateTime getLocalDateTimeNow() {
-        return LocalDateTime.now(ZoneId.of(getSystemEnvProperty(Util.TIME_ZONE)));
+        return LocalDateTime.now(ZoneId.of(getSystemEnvProperty(TIME_ZONE)));
     }
 
     public static boolean hasText(String string) {

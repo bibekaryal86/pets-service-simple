@@ -14,6 +14,8 @@ To run the app, we need to supply the following environment variables:
 
 * Port
   * This is optional, and if it is not provided port defaults to 8080
+* Time Zone
+  * TZ: Preferred time zone, eg: America/Denver
 * Profile
   * SPRING_PROFILES_ACTIVE (development, docker, production)
 * PETS Database Security Details:
