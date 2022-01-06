@@ -16,6 +16,9 @@ import static pets.service.app.util.Util.getRequestPathParameter;
 import static pets.service.app.util.Util.hasText;
 
 public class UserServletCRU extends HttpServlet {
+    private static final String ENCODING = "utf-8";
+    private static final String CONTENT = "application/json";
+
     private boolean isValidUserRequest(UserRequest userRequest) {
         return userRequest != null &&
                 hasText(userRequest.getUsername()) &&
@@ -30,8 +33,8 @@ public class UserServletCRU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserResponse userResponse;
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json");
+        response.setCharacterEncoding(ENCODING);
+        response.setContentType(CONTENT);
 
         UserRequest userRequest = (UserRequest) getRequestBody(request, UserRequest.class);
 
@@ -58,8 +61,8 @@ public class UserServletCRU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserResponse userResponse;
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json");
+        response.setCharacterEncoding(ENCODING);
+        response.setContentType(CONTENT);
 
         String username = getRequestPathParameter(request, 6, 5);
 
@@ -87,8 +90,8 @@ public class UserServletCRU extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserResponse userResponse;
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json");
+        response.setCharacterEncoding(ENCODING);
+        response.setContentType(CONTENT);
 
         String username = getRequestPathParameter(request, 6, 4);
         UserRequest userRequest = (UserRequest) getRequestBody(request, UserRequest.class);

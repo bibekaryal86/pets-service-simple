@@ -16,13 +16,13 @@ import static pets.service.app.util.Util.getPetsDatabaseAuthHeaders;
 
 public class RefTypesConnector {
 
-    private static RefAccountTypeResponse refAccountTypeResponse = null;
-    private static RefBankResponse refBankResponse = null;
-    private static RefCategoryResponse refCategoryResponse = null;
-    private static RefCategoryTypeResponse refCategoryTypeResponse = null;
-    private static RefTransactionTypeResponse refTransactionTypeResponse = null;
+    private RefAccountTypeResponse refAccountTypeResponse = null;
+    private RefBankResponse refBankResponse = null;
+    private RefCategoryResponse refCategoryResponse = null;
+    private RefCategoryTypeResponse refCategoryTypeResponse = null;
+    private RefTransactionTypeResponse refTransactionTypeResponse = null;
 
-    public static void resetRefTypesCache() {
+    public void resetRefTypesCache() {
         refAccountTypeResponse = null;
         refBankResponse = null;
         refCategoryResponse = null;

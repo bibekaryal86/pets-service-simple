@@ -26,7 +26,7 @@ import static pets.service.app.util.CategoryTypeHelper.applyUsedInTransactionsOn
 public class RefTypesService {
 
     public static void resetRefTypesCaches() {
-        RefTypesConnector.resetRefTypesCache();
+        CompletableFuture.runAsync(new RefTypesConnector()::resetRefTypesCache);
     }
 
     public static void setRefTypesCaches() {
